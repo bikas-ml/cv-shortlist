@@ -1,9 +1,10 @@
 "use strict";
+require("dotenv").config();
 
 module.exports = {
-  GEMINI_API_KEY: "GEMINI_API_KEY_REDACTED",
-  SUPABASE_URL: "https://mgziwxtlpnyjrgyyuvee.supabase.co",
-  SUPABASE_KEY: "SUPABASE_KEY_REDACTED",
-  DB_CONN: "DB_CONN_REDACTED",
-  TOKEN_SECRET: "sysnova-ats-2025-secret",
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+  SUPABASE_URL:   process.env.SUPABASE_URL,
+  SUPABASE_KEY:   process.env.SUPABASE_KEY,
+  DB_CONN:        process.env.DB_CONN,
+  TOKEN_SECRET:   process.env.TOKEN_SECRET,
 };
