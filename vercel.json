@@ -15,12 +15,5 @@
       "src": "/(.*)",
       "dest": "/server.js"
     }
-  ],
-  "env": {
-    "GEMINI_API_KEY": "@GEMINI_API_KEY",
-    "SUPABASE_URL": "@SUPABASE_URL",
-    "SUPABASE_KEY": "@SUPABASE_KEY",
-    "DB_CONN": "@DB_CONN",
-    "TOKEN_SECRET": "@TOKEN_SECRET"
-  }
+  ]
 }
