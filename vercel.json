@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "npm install",
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": "package.json package-lock.json node_modules/**"
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
