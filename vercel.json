@@ -1,9 +1,13 @@
 {
   "version": 2,
+  "buildCommand": "npm install",
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": "package.json package-lock.json node_modules/**"
+      }
     }
   ],
   "routes": [
@@ -12,5 +16,11 @@
       "dest": "/server.js"
     }
   ],
-  "env": {}
+  "env": {
+    "GEMINI_API_KEY": "@GEMINI_API_KEY",
+    "SUPABASE_URL": "@SUPABASE_URL",
+    "SUPABASE_KEY": "@SUPABASE_KEY",
+    "DB_CONN": "@DB_CONN",
+    "TOKEN_SECRET": "@TOKEN_SECRET"
+  }
 }
