@@ -8,12 +8,18 @@ const crypto   = require("crypto");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { createClient }       = require("@supabase/supabase-js");
 const { Client: PgClient }   = require("pg");
+const {
+  GEMINI_API_KEY,
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  DB_CONN,
+  TOKEN_SECRET,
+} = require("./config");
 
 const app    = express();
 const PORT   = process.env.PORT || 8001;
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
-const GEMINI_API_KEY   = "GEMINI_API_KEY_REDACTED";
 const MODEL            = "gemma-3-27b-it";
 const MAX_CV_CHARS     = 12000;
 const HR_EMAIL         = "ai@sysnova.com";
@@ -24,13 +30,7 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 // ─────────────────────────────────────────────────────────────────────────────
 // Supabase — REST client (all CRUD) + direct pg connection (migrations only)
 // ─────────────────────────────────────────────────────────────────────────────
-const SUPABASE_URL  = "https://mgziwxtlpnyjrgyyuvee.supabase.co";
-const SUPABASE_KEY  = "bikas_SUPABASE_KEY_REDACTED";
-const DB_CONN       = "DB_CONN_REDACTED";
-
-const SUPABASE_KEY_RUNTIME = SUPABASE_KEY.replace(/^bikas_/, "");
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY_RUNTIME, {
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
@@ -104,8 +104,6 @@ async function initDb() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Auth helpers — stateless HMAC tokens (work across Vercel serverless)
 // ─────────────────────────────────────────────────────────────────────────────
-const TOKEN_SECRET = "sysnova-ats-2025-secret";
-
 function makeToken(user) {
   const payload = Buffer.from(JSON.stringify({ email: user.email, role: user.role, name: user.name })).toString("base64url");
   const sig     = crypto.createHmac("sha256", TOKEN_SECRET).update(payload).digest("base64url");
@@ -189,6 +187,8 @@ function calculateCombinedScore(aiScore, atsScore) {
 const CV_SYSTEM_PROMPT = `You are an expert HR recruiter, ATS specialist, and talent acquisition expert.
 Evaluate a candidate's CV against a Job Description.
 The CV is plain text — use its content to extract structured info.
+Evaluate strictly and only on evidence present in the job description and resume.
+Pay close attention to overall_score, skills_match, and experience_match; do not infer missing details.
 Respond with ONLY valid JSON — no markdown fences, no preamble, no extra text.`;
 
 function buildCVPrompt(jdText, cvText) {
@@ -199,6 +199,13 @@ ${jdText}
 ${cvText.slice(0, MAX_CV_CHARS)}
 
 Analyze this candidate and return a JSON object with EXACTLY these fields:
+
+Strict evaluation rules:
+- Compare the job description and resume directly and penalize missing evidence
+- overall_score should reflect strict alignment between JD and CV
+- skills_match should reflect only explicitly demonstrated skills
+- experience_match should reflect only clearly stated years, roles, and responsibilities
+- If evidence is weak or absent, score conservatively
 
 {
   "candidate_name": "<full name from CV or 'Unknown'>",
