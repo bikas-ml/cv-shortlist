@@ -1,9 +1,5 @@
 "use strict";
-
-// Load .env file locally, but don't fail on Vercel (no .env file there)
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+require("dotenv").config();
 
 module.exports = {
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,
