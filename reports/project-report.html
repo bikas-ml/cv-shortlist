@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Shortlister — Project Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 22mm 20mm 22mm;
+    }
+    :root {
+      --ink:        #1a1f2e;
+      --muted:      #5a6475;
+      --brand:      #c41d54;
+      --brand-dk:   #8e1240;
+      --brand-lt:   #fff2f7;
+      --line:       #dde3ef;
+      --soft:       #f4f7fc;
+      --soft2:      #eef3fb;
+      --step-num:   #c41d54;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: #fff;
+      color: var(--ink);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 10pt;
+      line-height: 1.65;
+    }
+
+    /* ─── COVER ─────────────────────────────────────────── */
+    .cover {
+      border-bottom: 3px solid var(--brand);
+      padding-bottom: 13mm;
+      margin-bottom: 11mm;
+    }
+    .cover-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .badge {
+      background: var(--brand);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 7.5pt;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 3px 11px;
+      border-radius: 20px;
+    }
+    .badge-sub {
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .cover-title {
+      font-size: 30pt;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.08;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .cover-subtitle {
+      font-size: 12pt;
+      color: var(--brand);
+      font-style: italic;
+      margin-bottom: 13px;
+    }
+    .cover-desc {
+      font-size: 10pt;
+      text-align: justify;
+      text-justify: inter-word;
+      margin-bottom: 13px;
+      max-width: 100%;
+    }
+    .meta-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+    }
+    .meta-card {
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--brand);
+      border-radius: 7px;
+      padding: 7px 9px;
+      background: var(--soft);
+    }
+    .meta-label {
+      display: block;
+      font-family: Arial, sans-serif;
+      font-size: 7pt;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .meta-val {
+      font-size: 9pt;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* ─── SECTION HEADINGS ──────────────────────────────── */
+    .sec-h {
+      font-family: Arial, sans-serif;
+      font-size: 12.5pt;
+      font-weight: 700;
+      color: var(--brand-dk);
+      border-left: 4px solid var(--brand);
+      padding-left: 9px;
+      margin: 14px 0 8px 0;
+      line-height: 1.2;
+    }
+    .sec-intro {
+      font-size: 10pt;
+      text-align: justify;
+      text-justify: inter-word;
+      margin-bottom: 10px;
+    }
+
+    /* ─── STEP FLOW ─────────────────────────────────────── */
+    .steps { margin: 0 0 12px 0; }
+
+    .step-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: 0;
+    }
+    /* Left column: number circle + vertical connector */
+    .step-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 36px;
+      margin-right: 8px;
+    }
+    .step-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 11pt;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(196,29,84,0.25);
+    }
+    .step-vline {
+      width: 2px;
+      flex: 1;
+      min-height: 10px;
+      background: linear-gradient(180deg, var(--brand) 0%, var(--line) 100%);
+    }
+    /* Arrow between circle and card */
+    .step-arrow-h {
+      font-size: 15pt;
+      color: var(--brand);
+      line-height: 1;
+      flex-shrink: 0;
+      margin: 5px 6px 0 0;
+    }
+    /* Card */
+    .step-card {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--brand);
+      border-radius: 7px;
+      padding: 8px 11px;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+    .step-title {
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+    .step-body-text {
+      font-size: 9pt;
+      color: var(--muted);
+      text-align: justify;
+      text-justify: inter-word;
+      line-height: 1.55;
+    }
+    /* spacer row for the last step (no line needed) */
+    .step-row:last-child .step-vline { display: none; }
+    .step-row:last-child .step-card  { margin-bottom: 0; }
+
+    /* ─── TABLE ─────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+      margin: 7px 0 10px 0;
+    }
+    thead tr { background: var(--brand); }
+    th {
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: #fff;
+      padding: 6px 9px;
+      text-align: left;
+      letter-spacing: 0.04em;
+    }
+    td {
+      border: 1px solid var(--line);
+      padding: 6px 9px;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: var(--soft); }
+
+    /* ─── TWO-COL ────────────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .col-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: var(--soft);
+    }
+    .col-panel-title {
+      font-family: Arial, sans-serif;
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: var(--brand-dk);
+      margin-bottom: 6px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--line);
+    }
+    .col-panel p {
+      font-size: 9pt;
+      text-align: justify;
+      text-justify: inter-word;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ─── HIGHLIGHT / CALLOUT ────────────────────────────── */
+    .callout {
+      border-left: 4px solid var(--brand);
+      background: #fff7fa;
+      padding: 10px 13px;
+      border-radius: 7px;
+      margin: 10px 0 12px 0;
+      font-size: 10pt;
+      text-align: justify;
+      text-justify: inter-word;
+      line-height: 1.65;
+    }
+
+    /* ─── NOTE ───────────────────────────────────────────── */
+    .note {
+      font-size: 8.5pt;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* ─── CAPTION ────────────────────────────────────────── */
+    .caption {
+      text-align: center;
+      font-size: 8.5pt;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 6px;
+    }
+
+    /* ─── WORKFLOW BOX ───────────────────────────────────── */
+    .wf-box {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: linear-gradient(155deg, #fff 0%, var(--soft) 100%);
+      padding: 12px;
+      margin: 8px 0 4px 0;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    .footer {
+      margin-top: 14px;
+      padding-top: 7px;
+      border-top: 2px solid var(--brand);
+      display: flex;
+      justify-content: space-between;
+      font-family: Arial, sans-serif;
+      font-size: 8pt;
+      color: var(--muted);
+    }
+
+    /* ─── PAGE BREAK ─────────────────────────────────────── */
+    .pb { page-break-before: always; break-before: page; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ COVER ══════════════════ -->
+<div class="cover">
+  <div class="cover-eyebrow">
+    <span class="badge">Project Report</span>
+    <span class="badge-sub">Recruitment Automation System &nbsp;·&nbsp; Confidential</span>
+  </div>
+  <div class="cover-title">CV Shortlister</div>
+  <div class="cover-subtitle">AI-Powered Resume Screening &amp; Candidate Evaluation Platform</div>
+  <p class="cover-desc">
+    This document provides a formal, step-by-step overview of the CV Shortlister system — a structured recruitment support platform designed to standardise and accelerate the initial stages of candidate evaluation. The system integrates AI-driven resume analysis, Applicant Tracking System (ATS) keyword matching, and exam-based assessment into a single, traceable workflow. Two roles interact with the system throughout this workflow: the <strong>Applicant</strong>, who submits credentials and completes assessments when invited, and the <strong>HR Professional</strong>, who reviews scored outputs, makes shortlisting decisions, administers examinations, and records final hiring outcomes.
+  </p>
+  <div class="meta-strip">
+    <div class="meta-card">
+      <span class="meta-label">System Type</span>
+      <span class="meta-val">Recruitment Support</span>
+    </div>
+    <div class="meta-card">
+      <span class="meta-label">User Roles</span>
+      <span class="meta-val">Applicant &amp; HR</span>
+    </div>
+    <div class="meta-card">
+      <span class="meta-label">Evaluation Method</span>
+      <span class="meta-val">AI + ATS + Exam</span>
+    </div>
+    <div class="meta-card">
+      <span class="meta-label">Scoring Approach</span>
+      <span class="meta-val">Conservative · Evidence-Only</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ SECTION 1: OVERVIEW ══════════════════ -->
+<div class="sec-h">1. Project Overview</div>
+<p class="sec-intro">
+  CV Shortlister is a two-role recruitment platform in which an Applicant submits a PDF résumé and the system evaluates it automatically against a predefined job description. The HR professional then reviews the scored output, makes shortlisting or rejection decisions, administers an optional examination, and records a final hiring outcome. By standardising the initial screening stage, the system removes manual inconsistency and provides HR with evidence-backed summaries for every candidate.
+</p>
+
+
+<!-- ══════════════════ SECTION 2: APPLICANT FLOW ══════════════════ -->
+<div class="sec-h">2. Applicant Workflow — Step-by-Step</div>
+<p class="sec-intro">
+  The following steps describe the complete journey of an Applicant from initial registration through to final exam submission. Each step is sequential; the next step becomes available only after the current one is successfully completed.
+</p>
+
+<div class="steps">
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">1</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Account Registration &amp; Authentication</div>
+      <div class="step-body-text">The Applicant begins by creating a new account on the platform. A unique email address and a secure password are required for registration. Upon successful account creation, the system authenticates the Applicant and grants access to the candidate submission portal. This step ensures that every application is tied to a verified and uniquely identifiable individual, which preserves the integrity of the hiring record.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">2</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Résumé Upload in PDF Format</div>
+      <div class="step-body-text">After logging in, the Applicant uploads their curriculum vitae in PDF format. The system accepts only PDF documents to ensure consistent and reliable text extraction across all submissions. The uploaded file is stored securely and immediately queued for automated analysis. No manual reformatting or editing of the document is required from the Applicant at this stage.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">3</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Automated Résumé Analysis Against Job Description</div>
+      <div class="step-body-text">The system extracts the full text from the uploaded PDF and compares it strictly against the active job description. The analysis produces an AI overall score, a skills match percentage, an experience match rating, an education match assessment, an ATS keyword score, a list of identified strengths, a list of competency gaps, and a summary of missing requirements. Only evidence explicitly present in the résumé is considered; no assumptions or inferences are made on the candidate's behalf.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">4</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Awaiting HR Review &amp; Shortlist Decision</div>
+      <div class="step-body-text">Once analysis is complete, the Applicant enters a structured waiting state. The HR professional independently reviews the analysis output alongside the original résumé. At this stage, HR may shortlist the candidate — advancing them to the examination phase — or reject the application. The Applicant is notified of the outcome through the platform, ensuring transparency at every stage of the process.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">5</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Examination Receipt, Completion &amp; Submission</div>
+      <div class="step-body-text">If shortlisted, the Applicant receives an examination consisting of 15 multiple-choice questions tailored to the requirements of the role. The Applicant completes all questions and submits their answers within the allotted time period. The submitted answers are recorded by the system and made immediately available to the HR professional for evaluation alongside the résumé analysis results.</div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════ SECTION 3: HR FLOW ══════════════════ -->
+<div class="sec-h">3. HR Professional Workflow — Step-by-Step</div>
+<p class="sec-intro">
+  The HR professional operates independently from the Applicant and maintains full visibility over all submissions at every stage. The following steps describe the HR journey from candidate pool review through to the recording of a final hiring decision.
+</p>
+
+<div class="steps">
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">1</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Candidate Pool Review &amp; Dashboard Access</div>
+      <div class="step-body-text">The HR professional logs into the administrative dashboard and is presented with a complete list of all submitted applications. Each entry displays the candidate's name, submission date, and a summary of their primary evaluation scores. HR may filter or sort the pool by score, submission date, or application status to prioritise the review queue. This overview provides an immediate, structured picture of the entire candidate pool.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">2</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Detailed Analysis Inspection</div>
+      <div class="step-body-text">For each candidate under consideration, the HR professional opens the detailed analysis panel. This view presents the AI overall score, the ATS keyword match score, the skills alignment percentage, the experience fit rating, and the education match assessment. Additionally, the system displays explicitly identified strengths, competency gaps, and missing requirements. HR uses this structured output — in conjunction with the original résumé — to form a fully informed and well-supported judgment regarding each applicant.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">3</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Shortlist or Rejection Decision</div>
+      <div class="step-body-text">Based on the analysis results and their professional judgment, the HR professional records a formal decision — Shortlist or Reject — for each candidate. Shortlisted candidates proceed to the examination phase. Rejected candidates are marked accordingly, and their records remain within the system for audit and reference purposes. Every decision is logged with a timestamp, ensuring full traceability and accountability throughout the process.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">4</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Examination Paper Distribution</div>
+      <div class="step-body-text">For candidates who have been formally shortlisted, the HR professional issues the examination paper through the platform. The system delivers the examination directly to the candidate's account and notifies them accordingly. HR retains full control over when the examination is issued and can monitor which candidates have received, commenced, or completed it. This step removes the need for manual coordination and keeps the assessment stage organised within a single system.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">5</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Examination Review &amp; Final Hiring Decision</div>
+      <div class="step-body-text">Once an Applicant submits their examination, the HR professional accesses the completed answers for review. The examination results are presented alongside the original résumé analysis to support a comprehensive and holistic final evaluation. The HR professional then records the definitive hiring decision — <strong>Selected</strong> or <strong>Rejected</strong> — within the system. This decision concludes the hiring cycle for that candidate and is stored as a permanent, auditable record within the platform.</div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════ PAGE 2 ══════════════════ -->
+<div class="pb"></div>
+
+
+<!-- ══════════════════ SECTION 4: BATCH ANALYSIS ══════════════════ -->
+<div class="sec-h">4. Batch Analysis &amp; Bulk Examination Distribution</div>
+<p class="sec-intro">
+  One of the most operationally significant capabilities of the CV Shortlister system is its support for <strong>batch processing</strong>. Rather than evaluating candidates one at a time, the HR professional may select multiple résumés simultaneously and instruct the system to analyse all of them in a single batch operation against a chosen job description. Upon completion, HR can review a consolidated comparison across all batch candidates and dispatch examination papers to all shortlisted applicants in a single bulk action — eliminating the need for repetitive individual processing.
+</p>
+
+<div class="steps">
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">1</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Job Description Selection for the Batch</div>
+      <div class="step-body-text">Before initiating a batch run, the HR professional selects the active job description against which all résumés in the batch will be evaluated. This ensures that every candidate in the batch is assessed against a single, consistent set of requirements, making the resulting scores directly comparable across the entire group. The job description remains fixed for the duration of the batch operation.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">2</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Multi-Résumé Selection &amp; Batch Submission</div>
+      <div class="step-body-text">The HR professional selects multiple candidate résumés from the dashboard — either individually or by applying filters such as submission date range or current application status. The selected résumés are submitted together as a single batch to the AI analysis engine. The system queues all selected documents for parallel processing, and no manual intervention is required between individual résumé analyses once the batch has been initiated.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">3</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Parallel AI Analysis Across All Selected Résumés</div>
+      <div class="step-body-text">The system processes all résumés in the batch simultaneously, applying the same evaluation logic to each document. For every résumé, the AI engine produces the full suite of evaluation signals: the overall AI score, skills match, experience match, education match, ATS keyword score, strengths, competency gaps, and missing requirements. Because every résumé is assessed against the same job description using identical logic, the resulting scores are directly comparable and suitable for side-by-side ranking.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">4</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Consolidated Batch Results Review</div>
+      <div class="step-body-text">Once the batch analysis is complete, the HR professional accesses a consolidated results view presenting all evaluated candidates in a single interface. This view enables direct comparison of scores, highlights the strongest candidates at a glance, and allows HR to apply filters or sort by any individual signal. HR can then inspect the detailed analysis for any candidate within the batch without leaving the consolidated view, making shortlisting decisions across a large pool significantly faster and more informed.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">5</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Bulk Examination Paper Distribution to Shortlisted Applicants</div>
+      <div class="step-body-text">After reviewing the batch results, the HR professional marks all qualifying candidates as shortlisted and initiates a single bulk exam dispatch. The system simultaneously delivers the examination paper to every shortlisted applicant's account and issues individual notifications to each recipient. HR does not need to send examination papers one by one; the entire shortlisted cohort receives the assessment in a single coordinated action. Each applicant's exam submission is tracked individually within the system, maintaining per-candidate traceability even within a bulk workflow.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="callout" style="margin-top:10px;">
+  <strong>Why Batch Analysis Matters:</strong> In high-volume recruitment scenarios — such as graduate intake cycles or roles with broad applicant pools — evaluating candidates individually is time-prohibitive. Batch analysis allows HR to process tens or hundreds of résumés in a single operation, apply a consistent scoring standard across all of them, and dispatch examinations to the entire shortlisted group simultaneously. This capability is what makes CV Shortlister suitable for real-world, large-scale hiring rather than only low-volume evaluation.
+</div>
+
+
+<!-- ══════════════════ SECTION 5: EVALUATION SIGNALS ══════════════════ -->
+<div class="sec-h">5. Key Evaluation Signals</div>
+<p class="sec-intro">
+  The system computes four primary evaluation signals for each résumé submission. All signals are derived strictly from the textual content of the uploaded résumé measured against the job description. No inferred, assumed, or supplemented information is incorporated into any score.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:22%">Signal</th>
+      <th style="width:14%">Source Module</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>AI Overall Score</strong></td>
+      <td>AI Engine</td>
+      <td>A holistic percentage reflecting how well the résumé content aligns with the complete requirements of the job description, combining skills, experience, and education into a single composite measure.</td>
+    </tr>
+    <tr>
+      <td><strong>Skills Match</strong></td>
+      <td>AI Engine</td>
+      <td>The proportion of skills explicitly listed in the job description that can be identified and verified within the résumé text. Only skills supported by direct textual evidence are included in this score.</td>
+    </tr>
+    <tr>
+      <td><strong>Experience Match</strong></td>
+      <td>AI Engine</td>
+      <td>An assessment of the candidate's years of experience, role titles, and stated responsibilities, measured against the experience requirements defined in the job description. Only verifiable experience is counted.</td>
+    </tr>
+    <tr>
+      <td><strong>ATS Keyword Score</strong></td>
+      <td>ATS Module</td>
+      <td>The frequency and contextual relevance of job-description keywords found in the résumé, combined with an evaluation of résumé formatting quality as it would be interpreted by an Applicant Tracking System parser.</td>
+    </tr>
+  </tbody>
+</table>
+<p class="note">▸ Scoring principle: The system applies conservative, evidence-only logic. Any requirement not explicitly verifiable in the résumé text is treated as absent and scored accordingly. This ensures that all evaluation outputs reflect confirmed candidate credentials exclusively.</p>
+
+
+<!-- ══════════════════ SECTION 6: WORKFLOW DIAGRAM ══════════════════ -->
+<div class="sec-h">6. End-to-End System Workflow</div>
+<p class="sec-intro">
+  The diagram below illustrates the complete operational flow of the system — from the moment an Applicant submits their résumé, through AI analysis and HR review, to the recording of a final hiring decision. Numbered steps correspond to the steps described in Sections 2 and 3 above.
+</p>
+
+<div class="wf-box">
+  <svg viewBox="0 0 620 310" width="100%" height="auto" role="img" aria-label="CV Shortlister end-to-end workflow">
+    <defs>
+      <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill="#c41d54"/>
+      </marker>
+      <marker id="arr2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill="#5a6475"/>
+      </marker>
+      <linearGradient id="appG" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#fff2f7"/>
+        <stop offset="100%" stop-color="#fde4ee"/>
+      </linearGradient>
+      <linearGradient id="hrG" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#eef3fb"/>
+        <stop offset="100%" stop-color="#dce8f6"/>
+      </linearGradient>
+      <linearGradient id="aiG" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#c41d54"/>
+        <stop offset="100%" stop-color="#8e1240"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Lane backgrounds -->
+    <rect x="8"  y="8"   width="604" height="140" rx="10" fill="#fff9fb" stroke="#f5c0d0" stroke-width="1"/>
+    <rect x="8"  y="158" width="604" height="140" rx="10" fill="#f4f7fc" stroke="#c8d8ef" stroke-width="1"/>
+
+    <!-- Lane labels -->
+    <text x="18" y="30"  font-size="8" font-family="Arial" fill="#c41d54" font-weight="700" letter-spacing="0.08em">APPLICANT LANE</text>
+    <text x="18" y="178" font-size="8" font-family="Arial" fill="#1a1f2e" font-weight="700" letter-spacing="0.08em">HR LANE</text>
+
+    <!-- ── APPLICANT STEPS (top lane) ── -->
+    <!-- Step A1: Register -->
+    <rect x="22" y="40" width="88" height="96" rx="8" fill="url(#appG)" stroke="#c41d54" stroke-width="1.2"/>
+    <circle cx="66" cy="56" r="10" fill="#c41d54"/>
+    <text x="66" y="60" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">1</text>
+    <text x="66" y="80" text-anchor="middle" font-size="8" font-family="Arial" fill="#8e1240" font-weight="700">Register</text>
+    <text x="66" y="94" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">Create account</text>
+    <text x="66" y="106" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">and log in</text>
+    <!-- arrow -->
+    <line x1="110" y1="88" x2="128" y2="88" stroke="#c41d54" stroke-width="1.8" marker-end="url(#arr)"/>
+
+    <!-- Step A2: Upload CV -->
+    <rect x="130" y="40" width="88" height="96" rx="8" fill="url(#appG)" stroke="#c41d54" stroke-width="1.2"/>
+    <circle cx="174" cy="56" r="10" fill="#c41d54"/>
+    <text x="174" y="60" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">2</text>
+    <text x="174" y="80" text-anchor="middle" font-size="8" font-family="Arial" fill="#8e1240" font-weight="700">Upload CV</text>
+    <text x="174" y="94" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">PDF résumé</text>
+    <text x="174" y="106" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">submitted</text>
+    <!-- arrow -->
+    <line x1="218" y1="88" x2="236" y2="88" stroke="#c41d54" stroke-width="1.8" marker-end="url(#arr)"/>
+
+    <!-- Step A3: AI Analysis (shared / centre) -->
+    <rect x="238" y="26" width="144" height="118" rx="10" fill="url(#aiG)" stroke="#8e1240" stroke-width="1.5"/>
+    <circle cx="310" cy="46" r="11" fill="#fff" fill-opacity="0.25"/>
+    <text x="310" y="51" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">3</text>
+    <text x="310" y="72" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">AI Résumé Analysis</text>
+    <text x="310" y="88" text-anchor="middle" font-size="7.5" font-family="Arial" fill="#ffd0df">AI Score · Skills Match</text>
+    <text x="310" y="102" text-anchor="middle" font-size="7.5" font-family="Arial" fill="#ffd0df">Experience · Education</text>
+    <text x="310" y="116" text-anchor="middle" font-size="7.5" font-family="Arial" fill="#ffd0df">ATS Keywords · Gaps</text>
+    <!-- arrow right -->
+    <line x1="382" y1="88" x2="400" y2="88" stroke="#fff" stroke-width="1.8" marker-end="url(#arr)"/>
+
+    <!-- Step A4: Await Decision -->
+    <rect x="402" y="40" width="88" height="96" rx="8" fill="url(#appG)" stroke="#c41d54" stroke-width="1.2"/>
+    <circle cx="446" cy="56" r="10" fill="#c41d54"/>
+    <text x="446" y="60" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">4</text>
+    <text x="446" y="80" text-anchor="middle" font-size="8" font-family="Arial" fill="#8e1240" font-weight="700">Await Decision</text>
+    <text x="446" y="94" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">Notified of</text>
+    <text x="446" y="106" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">outcome</text>
+    <!-- arrow right -->
+    <line x1="490" y1="88" x2="508" y2="88" stroke="#c41d54" stroke-width="1.8" marker-end="url(#arr)"/>
+
+    <!-- Step A5: Complete Exam -->
+    <rect x="510" y="40" width="90" height="96" rx="8" fill="url(#appG)" stroke="#c41d54" stroke-width="1.2"/>
+    <circle cx="555" cy="56" r="10" fill="#c41d54"/>
+    <text x="555" y="60" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">5</text>
+    <text x="555" y="80" text-anchor="middle" font-size="8" font-family="Arial" fill="#8e1240" font-weight="700">Complete Exam</text>
+    <text x="555" y="94" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">15 MCQs</text>
+    <text x="555" y="106" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">submitted</text>
+
+    <!-- ── CONNECTORS between lanes ── -->
+    <!-- Arrow: AI Analysis down to HR Review -->
+    <line x1="310" y1="144" x2="310" y2="168" stroke="#c41d54" stroke-width="1.8" marker-end="url(#arr)"/>
+    <!-- Arrow: Applicant exam result down to HR Final -->
+    <line x1="555" y1="136" x2="555" y2="168" stroke="#c41d54" stroke-width="1.8" marker-end="url(#arr)"/>
+
+    <!-- ── HR STEPS (bottom lane) ── -->
+    <!-- Step H1: Review Pool -->
+    <rect x="22" y="172" width="88" height="108" rx="8" fill="url(#hrG)" stroke="#5a6475" stroke-width="1.2"/>
+    <circle cx="66" cy="188" r="10" fill="#1a1f2e"/>
+    <text x="66" y="192" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">1</text>
+    <text x="66" y="210" text-anchor="middle" font-size="8" font-family="Arial" fill="#1a1f2e" font-weight="700">Review Pool</text>
+    <text x="66" y="224" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">All candidates</text>
+    <text x="66" y="236" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">listed &amp; filtered</text>
+    <!-- arrow -->
+    <line x1="110" y1="226" x2="128" y2="226" stroke="#5a6475" stroke-width="1.8" marker-end="url(#arr2)"/>
+
+    <!-- Step H2: Inspect Analysis -->
+    <rect x="130" y="172" width="88" height="108" rx="8" fill="url(#hrG)" stroke="#5a6475" stroke-width="1.2"/>
+    <circle cx="174" cy="188" r="10" fill="#1a1f2e"/>
+    <text x="174" y="192" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">2</text>
+    <text x="174" y="210" text-anchor="middle" font-size="8" font-family="Arial" fill="#1a1f2e" font-weight="700">Inspect Analysis</text>
+    <text x="174" y="224" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">Scores, gaps &amp;</text>
+    <text x="174" y="236" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">strengths reviewed</text>
+    <!-- arrow -->
+    <line x1="218" y1="226" x2="236" y2="226" stroke="#5a6475" stroke-width="1.8" marker-end="url(#arr2)"/>
+
+    <!-- Step H3: Shortlist / Reject (spans under AI box) -->
+    <rect x="238" y="172" width="144" height="108" rx="8" fill="url(#hrG)" stroke="#c41d54" stroke-width="1.5"/>
+    <circle cx="310" cy="188" r="10" fill="#c41d54"/>
+    <text x="310" y="192" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">3</text>
+    <text x="310" y="212" text-anchor="middle" font-size="8" font-family="Arial" fill="#8e1240" font-weight="700">Shortlist or Reject</text>
+    <text x="310" y="228" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">Decision logged</text>
+    <text x="310" y="242" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">with timestamp</text>
+    <!-- arrow -->
+    <line x1="382" y1="226" x2="400" y2="226" stroke="#c41d54" stroke-width="1.8" marker-end="url(#arr)"/>
+
+    <!-- Step H4: Send Exam -->
+    <rect x="402" y="172" width="88" height="108" rx="8" fill="url(#hrG)" stroke="#5a6475" stroke-width="1.2"/>
+    <circle cx="446" cy="188" r="10" fill="#1a1f2e"/>
+    <text x="446" y="192" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">4</text>
+    <text x="446" y="210" text-anchor="middle" font-size="8" font-family="Arial" fill="#1a1f2e" font-weight="700">Send Exam</text>
+    <text x="446" y="224" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">Paper issued to</text>
+    <text x="446" y="236" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">shortlisted only</text>
+    <!-- arrow -->
+    <line x1="490" y1="226" x2="508" y2="226" stroke="#5a6475" stroke-width="1.8" marker-end="url(#arr2)"/>
+
+    <!-- Step H5: Final Decision -->
+    <rect x="510" y="172" width="90" height="108" rx="8" fill="url(#hrG)" stroke="#5a6475" stroke-width="1.2"/>
+    <circle cx="555" cy="188" r="10" fill="#1a1f2e"/>
+    <text x="555" y="192" text-anchor="middle" font-size="9" font-family="Arial" fill="#fff" font-weight="700">5</text>
+    <text x="555" y="210" text-anchor="middle" font-size="8" font-family="Arial" fill="#1a1f2e" font-weight="700">Final Decision</text>
+    <text x="555" y="224" text-anchor="middle" font-size="7" font-family="Arial" fill="#c41d54" font-weight="700">Selected</text>
+    <text x="555" y="238" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">or Rejected</text>
+  </svg>
+</div>
+<div class="caption">Figure 1 — End-to-end CV Shortlister workflow. Top lane (pink): Applicant steps 1–5. Bottom lane (blue): HR steps 1–5. Arrows indicate the direction of progression. Step 3 (AI Analysis) is the shared pivot between both lanes. Batch analysis operates across multiple candidates at Steps H2–H4 simultaneously.</div>
+
+
+<!-- ══════════════════ SECTION 7: WHY USEFUL ══════════════════ -->
+<div class="sec-h">7. Value Delivered to Each Role</div>
+<div class="two-col">
+  <div class="col-panel">
+    <div class="col-panel-title">For the Applicant</div>
+    <p>The submission process is straightforward and requires only a valid account and a PDF résumé. No manual form completion or interpretation of scoring criteria is required from the Applicant. The platform communicates the status of the application at each key stage — analysis completion, shortlist or rejection outcome, and examination receipt — ensuring that the Applicant always has clear visibility of their position within the hiring process.</p>
+  </div>
+  <div class="col-panel">
+    <div class="col-panel-title">For the HR Professional</div>
+    <p>HR receives a structured, evidence-backed summary for every candidate without performing the initial text review manually. Filtering by score or application status significantly reduces the time spent on clearly unsuitable submissions. Every decision — shortlist, rejection, examination distribution, and final outcome — is logged within the system, making the entire process auditable, defensible, and straightforward to communicate to stakeholders.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════ SECTION 8: CONCLUSION ══════════════════ -->
+<div class="sec-h">8. Conclusion</div>
+<div class="callout">
+  CV Shortlister is a structured recruitment support system that integrates AI-driven résumé analysis, ATS-style keyword matching, examination-based candidate assessment, and batch processing into a unified two-role hiring workflow. Its batch analysis capability allows HR to evaluate multiple résumés simultaneously against a single job description and distribute examination papers to all shortlisted candidates in one action — making the system equally effective for low-volume and high-volume recruitment scenarios. By applying a conservative, evidence-only scoring approach throughout, the system ensures that every evaluation is grounded exclusively in verifiable candidate data rather than assumptions or inferences. The result is a hiring process that is faster and more consistent for HR, transparent and straightforward for Applicants, and fully traceable for organisational records — regardless of the scale of the candidate pool.
+</div>
+
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<div class="footer">
+  <span>CV Shortlister — Project Report</span>
+  <span>Confidential · For Internal Use Only</span>
+  <span>Page 2–3 of 3</span>
+</div>
+
+</body>
+</html>
