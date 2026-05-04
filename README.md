@@ -1,4 +1,4 @@
-# ⚡ CV Shortlister — AI + ATS Recruitment Intelligence
+# ⚡ CV Shortlister Recruitment Intelligence
 
 An AI-powered resume screening system running entirely in **Node.js** — no separate Python backend needed. The Express server handles PDF parsing, Groq AI scoring, ATS keyword analysis, exam generation, and grading all in one process.
 
