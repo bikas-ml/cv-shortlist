@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Shortlister — Sysnova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    (function() {
+      try {
+        const s = JSON.parse(sessionStorage.getItem("ats_session") || "null");
+        if (!s) { window.location.replace("/login"); return; }
+        if (s.role === "user") { window.location.replace("/dashboard"); return; }
+        window.location.replace("/hr");
+      } catch { window.location.replace("/login"); }
+    })();
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink:       #E2136E;
+      --pink-dark:  #C0105C;
+      --pink-light: #F7E8F0;
+      --bg:         #F5F6FA;
+      --surface:    #FFFFFF;
+      --border:     #E8E8EE;
+      --text:       #1A1A2E;
+      --text-muted: #6B6B8A;
+      --font: 'Inter', -apple-system, sans-serif;
+    }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    .app-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      background: var(--pink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 96px;
+      z-index: 10;
+      box-shadow: 0 2px 12px rgba(226,19,110,0.25);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { font-size: 20px; }
+    .logo-text { font-size: 16px; font-weight: 400; color: rgba(255,255,255,0.85); }
+    .logo-text strong { color: #fff; font-weight: 800; }
+    .header-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.3); margin: 0 12px; }
+    .header-subtitle { font-size: 12px; color: rgba(255,255,255,0.75); letter-spacing: 0.04em; }
+    .header-left { display: flex; align-items: center; }
+    .logout-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* Main content */
+    .page {
+      min-height: 100vh;
+      padding-top: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 40px;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--pink-light);
+      color: var(--pink);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .hero-title span { color: var(--pink); }
+    .hero-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Cards */
+    .cards {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0 20px;
+      max-width: 860px;
+      width: 100%;
+    }
+    .card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px 28px;
+      width: 360px;
+      flex-shrink: 0;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--pink);
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(226,19,110,0.14);
+      border-color: var(--pink);
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--pink-light);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .card-features li {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-features li::before {
+      content: '✓';
+      color: var(--pink);
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 10px 22px;
+      background: var(--pink);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      align-self: flex-start;
+      transition: background 0.18s;
+    }
+    .card:hover .card-cta { background: var(--pink-dark); }
+
+    .footer-note {
+      margin-top: 40px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .footer-note strong { color: var(--pink); }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">CV <strong>Shortlister</strong></span>
+      </div>
+      <div class="header-divider"></div>
+      <span class="header-subtitle">Sysnova ATS Intelligence</span>
+    </div>
+    <button class="logout-btn" id="logoutBtn">Sign Out</button>
+  </header>
+
+  <div class="page">
+    <div class="hero">
+      <div class="hero-badge">✦ Powered by Sysnova</div>
+      <h1 class="hero-title">Choose Your <span>Module</span></h1>
+      <p class="hero-desc">
+        AI-powered CV screening and candidate management for your hiring workflow.
+      </p>
+    </div>
+
+    <div class="cards">
+
+      <!-- HR Module -->
+      <a class="card" href="/hr">
+        <div class="card-icon">👥</div>
+        <div class="card-title">HR Module</div>
+        <div class="card-desc">
+          Upload up to 10 CVs at once and instantly rank candidates by relevance to your job description.
+        </div>
+        <ul class="card-features">
+          <li>Bulk upload — up to 10 PDF CVs</li>
+          <li>Auto-ranked by combined AI + ATS score</li>
+          <li>Shortlisted vs. not-relevant classification</li>
+          <li>Keyword match &amp; skill gap analysis</li>
+        </ul>
+        <div class="card-cta">Open HR Module →</div>
+      </a>
+
+    </div>
+
+    <div class="footer-note">
+      Powered by <strong>Sysnova</strong> &nbsp;·&nbsp; Sysnova © 2025
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    // Show HR name in header
+    const s = getSession();
+    if (s) {
+      const logoutBtn = document.getElementById("logoutBtn");
+      logoutBtn.title = s.name + " · " + s.email;
+      logoutBtn.addEventListener("click", logout);
+    }
+  </script>
+  <script src="/js/neural-network.js"></script>
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — CV Shortlister</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink:        #E2136E;
+      --pink-dark:   #C0105C;
+      --pink-light:  rgba(226,19,110,0.08);
+      --bg:          #F5F6FA;
+      --surface:     #FFFFFF;
+      --border:      #E8E8EE;
+      --border-focus:#E2136E;
+      --text:        #1A1A2E;
+      --text-sub:    #4A4A6A;
+      --muted:       #8888AA;
+      --error:       #EF4444;
+      --success:     #10B981;
+      --radius:      16px;
+      --font:        'Inter', -apple-system, sans-serif;
+      --shadow:      0 20px 60px rgba(226,19,110,0.14), 0 4px 16px rgba(0,0,0,0.07);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      font-family: var(--font);
+      color: var(--text);
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Subtle blurred background blobs */
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before { width: 500px; height: 500px; background: var(--pink); top: -140px; left: -140px; }
+    body::after  { width: 400px; height: 400px; background: #7C3AED; bottom: -100px; right: -100px; }
+
+    /* ── Page wrapper ── */
+    .login-page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ── Card ── */
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 440px;
+      padding: 40px 40px 32px;
+    }
+
+    /* ── Brand ── */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 14px rgba(226,19,110,0.35);
+    }
+    .brand-name  { font-size: 18px; font-weight: 800; color: var(--text); line-height: 1.2; }
+    .brand-name span { color: var(--pink); }
+    .brand-tagline { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Mode toggle tabs ── */
+    .mode-tabs {
+      display: flex;
+      background: #F1F2F6;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+      gap: 4px;
+    }
+    .mode-tab {
+      flex: 1;
+      padding: 9px 0;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-tab.active {
+      background: var(--surface);
+      color: var(--pink);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.10);
+    }
+
+    /* ── Form header ── */
+    .form-header { margin-bottom: 24px; }
+    .form-heading { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .form-subheading { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── HR admin badge ── */
+    .hr-badge {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: rgba(226,19,110,0.07);
+      border: 1px solid rgba(226,19,110,0.2);
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--pink);
+      margin-bottom: 20px;
+    }
+    .hr-badge.visible { display: flex; }
+    .hr-badge-icon { font-size: 16px; }
+
+    /* ── Error message ── */
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: 9px;
+      background: rgba(239,68,68,0.07);
+      border: 1px solid rgba(239,68,68,0.22);
+      border-radius: 9px;
+      color: var(--error);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 11px 14px;
+      margin-bottom: 18px;
+    }
+    .error-msg.visible { display: flex; }
+
+    /* ── Form fields ── */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 7px;
+    }
+    .field-required { color: var(--pink); font-size: 11px; }
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--text);
+      background: #FAFAFA;
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+    .form-input::placeholder { color: var(--muted); }
+    .form-input:focus {
+      border-color: var(--pink);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(226,19,110,0.10);
+    }
+
+    /* ── Password field ── */
+    .pw-wrap { position: relative; }
+    .pw-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 15px;
+      padding: 4px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .pw-toggle:hover { color: var(--pink); }
+    .pw-input { padding-right: 42px !important; }
+
+    /* ── Divider ── */
+    .form-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      margin: 4px 0 20px;
+    }
+    .form-divider::before, .form-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Submit button ── */
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: opacity 0.18s, transform 0.12s, box-shadow 0.18s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(226,19,110,0.30);
+      margin-top: 6px;
+      letter-spacing: 0.01em;
+    }
+    .login-btn:hover:not(:disabled) {
+      opacity: 0.93;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(226,19,110,0.38);
+    }
+    .login-btn:active:not(:disabled) { transform: scale(0.99); }
+    .login-btn:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+
+    /* Loading spinner */
+    .btn-spinner {
+      width: 17px; height: 17px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+      flex-shrink: 0;
+    }
+    .login-btn.loading .btn-spinner { display: block; }
+    .login-btn.loading .btn-label   { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Switch mode link ── */
+    .switch-mode {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+    .switch-link {
+      background: none;
+      border: none;
+      color: var(--pink);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .switch-link:hover { color: var(--pink-dark); }
+
+    /* ── Footer ── */
+    .login-footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Utility ── */
+    .hidden-field { display: none !important; }
+
+    /* ── Mobile ── */
+    @media (max-width: 480px) {
+      .login-card { padding: 32px 24px 28px; }
+      .form-heading { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+
+      <!-- Brand -->
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div>
+          <div class="brand-name">CV <span>Shortlister</span></div>
+          <div class="brand-tagline">Sysnova ATS Intelligence</div>
+        </div>
+      </div>
+
+      <!-- Sign In / Sign Up tabs -->
+      <div class="mode-tabs" id="modeTabs">
+        <button class="mode-tab active" id="tabSignin" type="button">Sign In</button>
+        <button class="mode-tab" id="tabSignup" type="button">Sign Up</button>
+      </div>
+
+      <!-- Dynamic heading -->
+      <div class="form-header">
+        <h2 class="form-heading" id="formHeading">Welcome back</h2>
+        <p class="form-subheading" id="formSubheading">Sign in to continue to your account</p>
+      </div>
+
+      <!-- HR admin badge (shown when HR email is detected) -->
+      <div class="hr-badge" id="hrBadge">
+        <span class="hr-badge-icon">🔐</span>
+        Signing in as HR Administrator
+      </div>
+
+      <!-- Error message -->
+      <div class="error-msg" id="errorMsg">
+        <span>⚠</span>
+        <span id="errorText">Invalid credentials.</span>
+      </div>
+
+      <!-- Form -->
+      <form id="loginForm" autocomplete="on" novalidate>
+
+        <!-- Full Name (Sign Up only) -->
+        <div class="form-group hidden-field" id="nameWrap">
+          <label class="form-label" for="nameInput">
+            Full Name <span class="field-required">*</span>
+          </label>
+          <input
+            id="nameInput"
+            type="text"
+            class="form-input"
+            placeholder="Enter your full name"
+            autocomplete="name"
+          />
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label" for="emailInput">
+            Email Address <span class="field-required">*</span>
+          </label>
+          <input
+            id="emailInput"
+            type="email"
+            class="form-input"
+            placeholder="you@example.com"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="passwordInput">
+            Password <span class="field-required">*</span>
+          </label>
+          <div class="pw-wrap">
+            <input
+              id="passwordInput"
+              type="password"
+              class="form-input pw-input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" class="pw-toggle" id="pwToggle" title="Show / hide password">👁</button>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="login-btn" id="loginBtn">
+          <div class="btn-spinner"></div>
+          <span class="btn-label" id="loginLabel">Sign In</span>
+        </button>
+
+      </form>
+
+      <!-- Switch mode -->
+      <p class="switch-mode" id="switchMode">
+        Don't have an account?
+        <button type="button" class="switch-link" id="switchBtn">Create one</button>
+      </p>
+
+      <div class="login-footer">
+        Powered by <strong style="color:var(--pink)">Sysnova</strong> &nbsp;·&nbsp; © 2025
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/login.js"></script>
+  <script src="/js/neural-network.js"></script>
+</body>
+</html>

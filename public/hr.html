@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HR Module — CV Shortlister</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/auth.js"></script>
+  <script>
+    (function() {
+      const s = requireAuth("hr");
+      if (s) window.__session = s;
+    })();
+  </script>
+  <style>
+    /* ── Push all content below fixed header ── */
+    body { padding-top: var(--header-h, 64px); }
+
+    /* ── Home Dashboard ─────────────────────────── */
+    .home-welcome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 36px 32px 4px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .home-greeting {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .home-date {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .home-welcome-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--bkash-pink);
+      background: var(--bkash-pink-light);
+      padding: 5px 14px;
+      border-radius: 99px;
+    }
+    .home-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      padding: 22px 32px;
+    }
+    .home-stat-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      border-top: 3px solid var(--accent, var(--bkash-pink));
+      transition: box-shadow 0.18s;
+    }
+    .home-stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .home-stat-icon { font-size: 22px; }
+    .home-stat-val {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent, var(--bkash-pink));
+      line-height: 1;
+    }
+    .home-stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .home-section-title {
+      padding: 4px 32px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+    }
+    .home-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      padding: 0 32px 36px;
+    }
+    .home-nav-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 20px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      font-family: var(--font);
+      position: relative;
+    }
+    .home-nav-card:hover {
+      border-color: var(--bkash-pink);
+      box-shadow: 0 6px 24px rgba(226,19,110,0.10);
+      transform: translateY(-2px);
+    }
+    .home-nav-card:active { transform: translateY(0); }
+    .home-nav-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .home-nav-content { flex: 1; min-width: 0; }
+    .home-nav-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .home-nav-count {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--bkash-pink);
+      color: white;
+      padding: 1px 7px;
+      border-radius: 99px;
+    }
+    .home-nav-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .home-nav-arrow {
+      font-size: 20px;
+      color: var(--bkash-pink);
+      flex-shrink: 0;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: all 0.18s;
+    }
+    .home-nav-card:hover .home-nav-arrow { opacity: 1; transform: translateX(0); }
+
+    /* Header user pill */
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 5px 12px 5px 8px;
+      border-radius: 99px;
+    }
+    .header-user-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* File count badge */
+    .file-count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--bkash-pink);
+      background: var(--bkash-pink-light);
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-top: 6px;
+    }
+
+    /* Multi-file list */
+    .hr-file-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+    .hr-file-name {
+      flex: 1;
+      font-weight: 500;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hr-file-size { color: var(--text-muted); font-size: 11px; flex-shrink: 0; }
+    .hr-file-remove {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .hr-file-remove:hover { color: var(--accent-red); }
+
+    /* Processing progress */
+    .hr-progress-bar-wrap {
+      background: var(--bkash-pink-light);
+      border-radius: 99px;
+      height: 6px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .hr-progress-bar {
+      height: 100%;
+      background: var(--bkash-pink);
+      border-radius: 99px;
+      transition: width 0.4s;
+    }
+
+    /* HR results */
+    .hr-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 700px) { .hr-stats { grid-template-columns: repeat(2, 1fr); } }
+
+    .hr-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .hr-stat-val {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hr-stat-val.total       { color: var(--text-primary); }
+    .hr-stat-val.shortlisted { color: var(--accent-green); }
+    .hr-stat-val.rejected    { color: var(--accent-red); }
+    .hr-stat-val.threshold   { color: var(--bkash-pink); }
+    .hr-stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+    /* Candidate rank card */
+    .hr-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.18s;
+    }
+    .hr-card:hover { box-shadow: var(--shadow-md); }
+    .hr-card.card-shortlisted { border-left: 4px solid var(--accent-green); }
+    .hr-card.card-rejected    { border-left: 4px solid #E5E7EB; }
+    .hr-card.card-error       { border-left: 4px solid var(--accent-red); }
+
+    .hr-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hr-rank {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bkash-pink-light);
+      color: var(--bkash-pink);
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hr-rank.rank-1 { background: #FEF3C7; color: #D97706; }
+    .hr-rank.rank-2 { background: #F1F5F9; color: #475569; }
+    .hr-rank.rank-3 { background: #FEE2E2; color: #B45309; }
+
+    .hr-identity { flex: 1; min-width: 0; }
+    .hr-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hr-filename { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .hr-score-block { text-align: center; flex-shrink: 0; }
+    .hr-score {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .hr-score.score-high { color: var(--accent-green); }
+    .hr-score.score-med  { color: var(--accent-yellow); }
+    .hr-score.score-low  { color: var(--accent-red); }
+    .hr-score-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+    .hr-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 99px;
+      flex-shrink: 0;
+    }
+    .badge-shortlisted { background: #D1FAE5; color: #065F46; }
+    .badge-rejected    { background: #F3F4F6; color: #6B7280; }
+    .badge-error       { background: #FEE2E2; color: #991B1B; }
+
+    .hr-chevron {
+      color: var(--text-muted);
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .hr-card.expanded .hr-chevron { transform: rotate(180deg); }
+
+    /* Card body (collapsible) */
+    .hr-card-body {
+      display: none;
+      padding: 0 20px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .hr-card.expanded .hr-card-body { display: block; }
+
+    /* Sub-score bars */
+    .sub-scores { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+    .sub-score-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+    .sub-score-label { width: 90px; color: var(--text-muted); font-weight: 500; flex-shrink: 0; }
+    .sub-score-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .sub-score-fill {
+      height: 100%;
+      background: var(--bkash-pink);
+      border-radius: 99px;
+      transition: width 0.6s;
+    }
+    .sub-score-val { width: 32px; text-align: right; font-weight: 600; color: var(--text-primary); flex-shrink: 0; }
+
+    .hr-summary {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-top: 14px;
+      padding: 12px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+    }
+
+    .hr-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .tags-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 99px;
+    }
+    .tag-green { background: #D1FAE5; color: #065F46; }
+    .tag-blue  { background: #DBEAFE; color: #1D4ED8; }
+    .tag-red   { background: #FEE2E2; color: #991B1B; }
+
+    .error-msg { color: var(--accent-red); }
+
+    .tab-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Top Header ──────────────────────────────────────────────────────── -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">Sysnova <strong>ATS</strong></span>
+      </div>
+      <div class="header-divider"></div>
+      <span class="header-subtitle">HR Management Portal</span>
+    </div>
+    <div class="header-right">
+      <div class="api-status" id="apiStatus">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusLabel">Checking API…</span>
+      </div>
+      <div class="header-divider"></div>
+      <div class="header-user" id="headerUser"></div>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </header>
+
+  <!-- ── HR Module Tab Bar ──────────────────────────────────────────────── -->
+  <div class="hr-module-tabs">
+    <button class="hr-module-tab hr-module-tab-active" data-panel="home" id="hrTabHome">
+      🏠 Overview
+    </button>
+    <button class="hr-module-tab" data-panel="batch" id="hrTabBatch">
+      📊 Batch Analysis
+    </button>
+    <button class="hr-module-tab" data-panel="applications" id="hrTabApplications">
+      📋 Applicants
+      <span class="hr-tab-badge" id="hrAppCount" style="display:none">0</span>
+    </button>
+    <button class="hr-module-tab" data-panel="exampending" id="hrTabExamPending">
+      ⏳ Exam Pending
+      <span class="hr-tab-badge" id="hrPendingCount" style="display:none">0</span>
+    </button>
+    <button class="hr-module-tab" data-panel="examresults" id="hrTabExamResults">
+      🏆 Exam Results
+      <span class="hr-tab-badge" id="hrExamCount" style="display:none">0</span>
+    </button>
+  </div>
+
+  <!-- ── Home / Overview Panel ────────────────────────────────────────────── -->
+  <div id="panelHome" class="hr-panel" style="position:relative;overflow:hidden">
+    <canvas id="hrBgCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0"></canvas>
+    <div style="position:relative;z-index:1">
+
+    <!-- Welcome bar -->
+    <div class="home-welcome">
+      <div>
+        <div class="home-greeting" id="homeGreeting">Welcome 👋</div>
+        <div class="home-date" id="homeDate"></div>
+      </div>
+      <div class="home-welcome-badge">Sysnova ATS Intelligence</div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="home-stats">
+      <div class="home-stat-card" style="--accent:#E2136E">
+        <div class="home-stat-icon">📋</div>
+        <div class="home-stat-val" id="homeStatApps">—</div>
+        <div class="home-stat-label">Total Applications</div>
+      </div>
+      <div class="home-stat-card" style="--accent:#22c55e">
+        <div class="home-stat-icon">✅</div>
+        <div class="home-stat-val" id="homeStatShortlisted">—</div>
+        <div class="home-stat-label">Shortlisted</div>
+      </div>
+      <div class="home-stat-card" style="--accent:#f59e0b">
+        <div class="home-stat-icon">⏳</div>
+        <div class="home-stat-val" id="homeStatPending">—</div>
+        <div class="home-stat-label">Exams Pending</div>
+      </div>
+      <div class="home-stat-card" style="--accent:#8b5cf6">
+        <div class="home-stat-icon">🏆</div>
+        <div class="home-stat-val" id="homeStatResults">—</div>
+        <div class="home-stat-label">Results Ready</div>
+      </div>
+    </div>
+
+    <!-- Navigation cards -->
+    <div class="home-section-title">Go to Module</div>
+    <div class="home-nav-grid">
+
+      <button class="home-nav-card" onclick="switchToPanel('batch')">
+        <div class="home-nav-icon-wrap" style="background:#FFF0F7">📊</div>
+        <div class="home-nav-content">
+          <div class="home-nav-title">Batch Analysis</div>
+          <div class="home-nav-desc">Upload up to 10 CVs and rank candidates using AI against a job description</div>
+        </div>
+        <div class="home-nav-arrow">→</div>
+      </button>
+
+      <button class="home-nav-card" onclick="switchToPanel('applications')">
+        <div class="home-nav-icon-wrap" style="background:#EFF6FF">📋</div>
+        <div class="home-nav-content">
+          <div class="home-nav-title">Applicants <span class="home-nav-count" id="homeBadgeApps"></span></div>
+          <div class="home-nav-desc">Review submitted CVs, run analysis, and send exams to shortlisted candidates</div>
+        </div>
+        <div class="home-nav-arrow">→</div>
+      </button>
+
+      <button class="home-nav-card" onclick="switchToPanel('exampending')">
+        <div class="home-nav-icon-wrap" style="background:#FFFBEB">⏳</div>
+        <div class="home-nav-content">
+          <div class="home-nav-title">Exam Pending <span class="home-nav-count" id="homeBadgePending"></span></div>
+          <div class="home-nav-desc">Monitor candidates who received an exam but haven't submitted yet</div>
+        </div>
+        <div class="home-nav-arrow">→</div>
+      </button>
+
+      <button class="home-nav-card" onclick="switchToPanel('examresults')">
+        <div class="home-nav-icon-wrap" style="background:#F5F3FF">🏆</div>
+        <div class="home-nav-content">
+          <div class="home-nav-title">Exam Results <span class="home-nav-count" id="homeBadgeResults"></span></div>
+          <div class="home-nav-desc">View submitted exam scores with detailed per-question performance charts</div>
+        </div>
+        <div class="home-nav-arrow">→</div>
+      </button>
+
+    </div>
+    </div><!-- /z-index wrapper -->
+  </div><!-- /panelHome -->
+
+  <!-- ── Applicants Panel ───────────────────────────────────────────────── -->
+  <div id="panelApplications" class="hr-panel hidden">
+    <div class="panel-heading">
+      <div class="panel-heading-row">
+        <div class="panel-heading-icon">📋</div>
+        <div>
+          <div class="panel-heading-title">Applicants</div>
+          <div class="panel-heading-sub">CVs submitted by candidates — select and analyze against a job description, then send exams to shortlisted ones</div>
+        </div>
+      </div>
+    </div>
+    <div class="apps-toolbar">
+      <div class="apps-filter-row">
+        <input type="text" id="appKeyword" class="apps-filter-input" placeholder="Search by name or email…" />
+        <select id="appStatusFilter" class="apps-filter-select">
+          <option value="">All Status</option>
+          <option value="uploaded">Uploaded</option>
+          <option value="shortlisted">Shortlisted</option>
+          <option value="rejected">Not Selected</option>
+        </select>
+        <button class="apps-refresh-btn" id="appsRefreshBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Refresh
+        </button>
+        <button class="apps-refresh-btn" id="clearAllDataBtn" style="color:#ef4444;border-color:#ef444430;background:#fff0f0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          Clear All Data
+        </button>
+      </div>
+      <div class="apps-action-row">
+        <label class="apps-select-all-label">
+          <input type="checkbox" id="appsSelectAll" /> Select All
+        </label>
+        <button class="apps-analyze-btn" id="appsAnalyzeBtn" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Analyze Selected
+        </button>
+      </div>
+    </div>
+    <div id="appsTableWrap">
+      <div class="apps-empty" id="appsEmpty">
+        <div class="apps-empty-icon">📭</div>
+        <div class="apps-empty-title">No Applications Yet</div>
+        <div class="apps-empty-desc">Applicants submit their CVs via the portal and they appear here</div>
+      </div>
+      <div id="appsTable"></div>
+    </div>
+  </div>
+
+  <!-- ── Exam Pending Panel ─────────────────────────────────────────────── -->
+  <div id="panelExamPending" class="hr-panel hidden">
+    <div class="panel-heading">
+      <div class="panel-heading-row">
+        <div class="panel-heading-icon">⏳</div>
+        <div>
+          <div class="panel-heading-title">Exam Pending</div>
+          <div class="panel-heading-sub">Candidates who have been sent an exam but haven't submitted yet — monitor expiry dates here</div>
+        </div>
+      </div>
+    </div>
+    <div class="apps-toolbar">
+      <div class="apps-filter-row">
+        <input type="text" id="pendingKeyword" class="apps-filter-input" placeholder="Search by name or email…" />
+        <button class="apps-refresh-btn" id="pendingRefreshBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+    <div id="pendingTableWrap">
+      <div class="apps-empty" id="pendingEmpty">
+        <div class="apps-empty-icon">⏳</div>
+        <div class="apps-empty-title">No Pending Exams</div>
+        <div class="apps-empty-desc">Candidates who have been sent an exam but haven't submitted yet appear here</div>
+      </div>
+      <div id="pendingTable"></div>
+    </div>
+  </div>
+
+  <!-- ── Exam Results Panel ─────────────────────────────────────────────── -->
+  <div id="panelExamResults" class="hr-panel hidden">
+    <div class="panel-heading">
+      <div class="panel-heading-row">
+        <div class="panel-heading-icon">🏆</div>
+        <div>
+          <div class="panel-heading-title">Exam Results</div>
+          <div class="panel-heading-sub">Submitted exam scores with detailed per-question performance charts for each candidate</div>
+        </div>
+      </div>
+    </div>
+    <div class="apps-toolbar">
+      <div class="apps-filter-row">
+        <input type="text" id="resultsKeyword" class="apps-filter-input" placeholder="Search by name or email…" />
+        <button class="apps-refresh-btn" id="resultsRefreshBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+    <div id="examResultsWrap">
+      <div class="apps-empty" id="examResultsEmpty">
+        <div class="apps-empty-icon">🏆</div>
+        <div class="apps-empty-title">No Exam Results Yet</div>
+        <div class="apps-empty-desc">Completed exam results appear here once candidates submit their exams</div>
+      </div>
+      <div id="examResultsTable"></div>
+    </div>
+  </div>
+
+  <!-- ── Batch Analysis Panel (existing) ───────────────────────────────── -->
+  <div id="panelBatch" class="hr-panel hidden">
+    <div class="panel-heading">
+      <div class="panel-heading-row">
+        <div class="panel-heading-icon">📊</div>
+        <div>
+          <div class="panel-heading-title">Batch Analysis</div>
+          <div class="panel-heading-sub">Upload up to 10 CVs, paste a job description, and let Sysnova AI rank and shortlist candidates</div>
+        </div>
+      </div>
+    </div>
+  <!-- ── Layout ──────────────────────────────────────────────────────────── -->
+  <div class="app-layout">
+
+    <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <div class="sidebar-section">
+        <label class="field-label">Job Description</label>
+        <textarea
+          id="jdInput"
+          class="jd-textarea"
+          placeholder="Paste the full job description here…&#10;&#10;Include role title, required skills, tools,&#10;certifications, and responsibilities."
+        ></textarea>
+      </div>
+
+      <div class="sidebar-section">
+        <label class="field-label">
+          Upload CVs
+          <span class="label-hint">(PDF only · max 10 files)</span>
+        </label>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept=".pdf" multiple hidden />
+          <div class="dropzone-icon">📂</div>
+          <div class="dropzone-text">Drop PDF files here</div>
+          <div class="dropzone-sub">or <span class="dropzone-link" id="browseLink">browse</span></div>
+        </div>
+        <div id="fileCountBadge" class="file-count-badge" style="display:none;">
+          <span>📄</span> <span id="fileCountText">0 / 10 CVs selected</span>
+        </div>
+        <div id="fileList"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="threshold-header">
+          <label class="field-label" for="thresholdSlider">Shortlist Threshold</label>
+          <span class="threshold-value" id="thresholdValue">70</span>
+        </div>
+        <input type="range" id="thresholdSlider" class="threshold-slider" min="0" max="100" step="5" value="70" />
+        <div class="threshold-desc">
+          Combined Score ≥ <strong id="thresholdDesc">70</strong> → shortlisted<br>
+          <span class="muted">AI Score (50%) + ATS Score (50%)</span>
+        </div>
+      </div>
+
+      <button class="run-btn" id="runBtn" disabled>
+        <svg class="run-btn-icon" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+        Screen CVs
+      </button>
+
+    </aside>
+
+    <!-- ── Main Results Area ──────────────────────────────────────────── -->
+    <main class="results-area">
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">👥</div>
+        <div class="empty-title">Ready to Screen CVs</div>
+        <div class="empty-desc">
+          Paste a job description, upload up to <strong>10 PDF CVs</strong>,<br>
+          then click <strong>Screen CVs</strong> to rank candidates.
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div class="loading-state hidden" id="loadingState">
+        <div class="spinner"></div>
+        <div class="loading-title" id="loadingTitle">Processing CVs…</div>
+        <div class="loading-desc" id="loadingDesc">Running Sysnova AI on each candidate</div>
+        <div class="hr-progress-bar-wrap" style="width:200px; margin-top:16px;">
+          <div class="hr-progress-bar" id="progressBar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="hidden" id="resultsContainer">
+
+        <!-- Stats -->
+        <div class="hr-stats" id="hrStats"></div>
+
+        <!-- Toolbar -->
+        <div class="results-toolbar">
+          <div class="results-meta" id="resultsMeta"></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="all" id="tabAll">All</button>
+          <button class="tab-btn" data-tab="shortlisted" id="tabShortlisted">✅ Shortlisted</button>
+          <button class="tab-btn" data-tab="rejected" id="tabRejected">Not Relevant</button>
+        </div>
+
+        <!-- Panels -->
+        <div id="panelAll"></div>
+        <div id="panelShortlisted" class="hidden"></div>
+        <div id="panelRejected" class="hidden"></div>
+
+      </div>
+
+    </main>
+  </div>
+  </div><!-- end panelBatch -->
+
+  <!-- ── Analyze Modal ──────────────────────────────────────────────────── -->
+  <div id="analyzeModal" class="mgmt-modal hidden">
+    <div class="mgmt-modal-box">
+      <div class="mgmt-modal-header">
+        <h3>Analyze Selected CVs</h3>
+        <button id="analyzeModalClose" class="exam-close-btn">✕</button>
+      </div>
+      <div class="mgmt-modal-body">
+        <label class="field-label">Job Description</label>
+        <textarea id="analyzeJdInput" class="jd-textarea" style="height:180px" placeholder="Paste the full job description here…"></textarea>
+        <div class="threshold-header" style="margin-top:16px">
+          <label class="field-label" for="analyzeThreshold">Shortlist Threshold</label>
+          <span class="threshold-value" id="analyzeThresholdVal">70</span>
+        </div>
+        <input type="range" id="analyzeThreshold" class="threshold-slider" min="0" max="100" step="5" value="70" />
+        <div id="analyzeProgress" class="hidden" style="margin-top:14px">
+          <div style="font-size:13px; color:#666; margin-bottom:6px" id="analyzeProgressText">Analyzing…</div>
+          <div class="hr-progress-bar-wrap"><div class="hr-progress-bar" id="analyzeProgressBar" style="width:0%"></div></div>
+        </div>
+        <div id="analyzeError" class="dash-msg error hidden"></div>
+      </div>
+      <div class="mgmt-modal-footer">
+        <button class="btn-secondary" id="analyzeModalCancel">Cancel</button>
+        <button class="run-btn" id="analyzeRunBtn" style="min-width:160px">
+          <span class="run-btn-icon">🔍</span> Run Analysis <span class="run-btn-icon">🔍</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Send Exam Modal ────────────────────────────────────────────────── -->
+  <div id="sendExamModal" class="mgmt-modal hidden">
+    <div class="mgmt-modal-box">
+      <div class="mgmt-modal-header">
+        <h3>Send Exam to Candidate</h3>
+        <button id="sendExamModalClose" class="exam-close-btn">✕</button>
+      </div>
+      <div class="mgmt-modal-body">
+        <div id="sendExamCandidateInfo" style="margin-bottom:16px; font-size:14px; color:#444"></div>
+        <label class="field-label">Job Description for Exam</label>
+        <textarea id="sendExamJdInput" class="jd-textarea" style="height:140px" placeholder="Job description (pre-filled from analysis)…"></textarea>
+        <div class="threshold-header" style="margin-top:16px">
+          <label class="field-label">Exam Validity</label>
+          <span class="threshold-value" id="examExpiryVal">7</span><span style="font-size:12px; color:#888"> days</span>
+        </div>
+        <input type="range" id="examExpirySlider" class="threshold-slider" min="1" max="30" step="1" value="7" />
+        <div id="sendExamError" class="dash-msg error hidden"></div>
+      </div>
+      <div class="mgmt-modal-footer">
+        <button class="btn-secondary" id="sendExamModalCancel">Cancel</button>
+        <button class="run-btn" id="sendExamRunBtn" style="min-width:160px">
+          <span class="run-btn-icon">📤</span> Send Exam <span class="run-btn-icon">📤</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grading overlay -->
+  <div id="sendExamGrading" class="exam-grading-overlay hidden">
+    <div class="exam-grading-box">
+      <div class="exam-spinner"></div>
+      <p>Generating exam questions…</p>
+    </div>
+  </div>
+
+  <!-- Exam Detail Modal (HR view) -->
+  <div id="examDetailModal" class="mgmt-modal hidden">
+    <div class="mgmt-modal-box mgmt-modal-xl">
+      <div class="mgmt-modal-header">
+        <div>
+          <h3 id="examDetailTitle">Exam Detail</h3>
+          <div id="examDetailMeta" style="font-size:12px;color:#888;margin-top:2px"></div>
+        </div>
+        <button id="examDetailClose" class="exam-close-btn">✕</button>
+      </div>
+      <div class="mgmt-modal-body" id="examDetailBody" style="max-height:80vh; overflow-y:auto; padding:0"></div>
+    </div>
+  </div>
+
+  <!-- ── HR Exam Modal ────────────────────────────────────────────────────── -->
+  <div id="hrExamModal" class="exam-modal hidden" role="dialog" aria-modal="true" aria-labelledby="hrExamTitle">
+    <div class="exam-header">
+      <div class="exam-header-left">
+        <span class="exam-logo">📝</span>
+        <div>
+          <div id="hrExamTitle" class="exam-title">Candidate Examination</div>
+          <div id="hrExamCandidate" class="exam-candidate-name"></div>
+        </div>
+      </div>
+      <div class="exam-header-right">
+        <div class="exam-score-box">
+          <span class="exam-score-label">Answered</span>
+          <span id="hrExamAnsweredCount" class="exam-score-val">0</span>
+          <span class="exam-score-label">/ 15</span>
+        </div>
+        <button id="hrExamCloseBtn" class="exam-close-btn" aria-label="Close exam">✕</button>
+      </div>
+    </div>
+    <div class="exam-body">
+      <div class="exam-info-bar">
+        <span>Total Marks: <strong>30</strong></span>
+        <span>Questions: <strong>15</strong></span>
+      </div>
+      <div id="hrExamQuestions" class="exam-questions-container"></div>
+    </div>
+    <div class="exam-footer">
+      <span id="hrExamFooterProgress" class="exam-progress-text">0 of 15 questions answered</span>
+      <button id="hrExamSubmitBtn" class="exam-submit-btn">Submit Exam</button>
+    </div>
+  </div>
+
+  <!-- HR Exam Warning -->
+  <div id="hrExamWarning" class="exam-warning-overlay hidden">
+    <div class="exam-warning-dialog">
+      <div class="exam-warning-icon">⚠️</div>
+      <h3>Submit Exam?</h3>
+      <p>You have answered <strong id="hrExamWarningAnswered">0</strong> of 15 questions.</p>
+      <p class="exam-warning-sub">Once submitted, you cannot change your answers.</p>
+      <div class="exam-warning-actions">
+        <button id="hrExamWarningCancel" class="btn-secondary">Go Back</button>
+        <button id="hrExamWarningConfirm" class="btn-danger">Yes, Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HR Exam Grading -->
+  <div id="hrExamGrading" class="exam-grading-overlay hidden">
+    <div class="exam-grading-box">
+      <div class="exam-spinner"></div>
+      <p>Evaluating answers…</p>
+    </div>
+  </div>
+
+  <!-- ── Batch: Send Exam to Applicant Modal ───────────────────────────────── -->
+  <div id="batchSendExamModal" class="mgmt-modal hidden">
+    <div class="mgmt-modal-box">
+      <div class="mgmt-modal-header">
+        <h3>Send Exam to Applicant</h3>
+        <button id="batchSendExamClose" class="exam-close-btn">✕</button>
+      </div>
+      <div class="mgmt-modal-body">
+        <div id="batchSendCandidateInfo" style="margin-bottom:14px;font-size:14px;color:#555;background:var(--surface-2);padding:10px 14px;border-radius:8px;border:1px solid var(--border)"></div>
+        <label class="field-label">Applicant <span style="color:#ef4444">*</span></label>
+        <select id="batchSendEmailSelect" class="apps-filter-input" style="width:100%;box-sizing:border-box;margin-bottom:16px;cursor:pointer;background:#fff;height:42px;padding:0 12px;font-size:14px">
+          <option value="">Loading applicants…</option>
+        </select>
+        <div id="batchSendSelectedInfo" style="display:none;margin:-10px 0 16px;font-size:12px;color:var(--text-muted);padding:6px 10px;background:var(--surface-2);border-radius:6px;border:1px solid var(--border)"></div>
+        <label class="field-label">Job Description</label>
+        <textarea id="batchSendJdInput" class="jd-textarea" style="height:130px" placeholder="Job description for the exam…"></textarea>
+        <div class="threshold-header" style="margin-top:16px">
+          <label class="field-label">Exam Validity</label>
+          <span class="threshold-value" id="batchExamExpiryVal">7</span><span style="font-size:12px;color:#888"> days</span>
+        </div>
+        <input type="range" id="batchExamExpirySlider" class="threshold-slider" min="1" max="30" step="1" value="7" />
+        <div id="batchSendError" class="dash-msg error hidden" style="margin-top:10px"></div>
+      </div>
+      <div class="mgmt-modal-footer">
+        <button class="btn-secondary" id="batchSendExamCancel">Cancel</button>
+        <button class="run-btn" id="batchSendExamRunBtn" style="min-width:160px">
+          <span class="run-btn-icon">📤</span> Send Exam
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch send grading overlay -->
+  <div id="batchSendGrading" class="exam-grading-overlay hidden">
+    <div class="exam-grading-box">
+      <div class="exam-spinner"></div>
+      <p>Generating exam questions…</p>
+    </div>
+  </div>
+
+  <script src="/js/hr.js"></script>
+  <script src="/js/hr-bg-animation.js"></script>
+  <script src="/js/neural-network.js"></script>
+  <script>
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+    // Populate header user pill
+    (function() {
+      const s = getSession();
+      if (s && s.name) {
+        const el = document.getElementById("headerUser");
+        if (el) {
+          const initials = s.name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+          el.innerHTML = `<span class="header-user-avatar">${initials}</span>${s.name}`;
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

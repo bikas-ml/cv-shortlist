@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Dashboard — CV Shortlister</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/auth.js"></script>
+  <script>
+    (function() { const s = requireAuth("hr"); if (s) window.__session = s; })();
+  </script>
+</head>
+<body>
+
+  <!-- ── Top Header ──────────────────────────────────────────────────────── -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="/" class="back-btn" title="Back to Home">← Back</a>
+      <div class="header-divider"></div>
+      <div class="logo">
+        <span class="logo-icon">🎯</span>
+        <span class="logo-text">ATS <strong>Dashboard</strong></span>
+      </div>
+      <div class="header-divider"></div>
+      <span class="header-subtitle">Individual CV Analysis</span>
+    </div>
+    <nav class="module-nav">
+      <a href="/hr"  class="mod-btn">👥 HR Module</a>
+      <a href="/ats" class="mod-btn mod-active">🎯 ATS Dashboard</a>
+    </nav>
+    <div class="header-right">
+      <div class="api-status" id="apiStatus">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusLabel">Checking API…</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Sign out">
+        Sign Out
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Layout ──────────────────────────────────────────────────────────── -->
+  <div class="app-layout">
+
+    <!-- ── Sidebar / Controls ──────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <div class="sidebar-section">
+        <label class="field-label">Job Description</label>
+        <textarea
+          id="jdInput"
+          class="jd-textarea"
+          placeholder="Paste the full job description here…&#10;&#10;Include role title, required skills, tools,&#10;certifications, and responsibilities.&#10;&#10;More detail = better ATS keyword extraction."
+        ></textarea>
+      </div>
+
+      <div class="sidebar-section">
+        <label class="field-label">Candidate CV <span class="label-hint">(PDF only, single file)</span></label>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept=".pdf" hidden />
+          <div class="dropzone-icon">📄</div>
+          <div class="dropzone-text">Drop a PDF file here</div>
+          <div class="dropzone-sub">or <span class="dropzone-link" id="browseLink">browse</span></div>
+        </div>
+        <div class="file-list" id="fileList"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="threshold-header">
+          <label class="field-label" for="thresholdSlider">Shortlist Threshold</label>
+          <span class="threshold-value" id="thresholdValue">70</span>
+        </div>
+        <input
+          type="range"
+          id="thresholdSlider"
+          class="threshold-slider"
+          min="0" max="100" step="5" value="70"
+        />
+        <div class="threshold-desc">
+          Combined Score ≥ <strong id="thresholdDesc">70</strong> → shortlisted<br>
+          <span class="muted">AI Score (50%) + ATS Score (50%)</span>
+        </div>
+      </div>
+
+      <button class="run-btn" id="runBtn" disabled>
+        <span class="run-btn-icon">🚀</span>
+        Submit
+        <span class="run-btn-icon">🚀</span>
+      </button>
+
+      <div class="sidebar-info-box">
+        <div class="info-box-title">Scoring Formula</div>
+        <div class="info-row">
+          <span class="info-dot ai"></span>
+          <span><strong>AI Score (50%)</strong> — holistic skills &amp; experience fit</span>
+        </div>
+        <div class="info-row">
+          <span class="info-dot ats"></span>
+          <span><strong>ATS Score (50%)</strong> — keyword match (60%) + density (25%) + format (15%)</span>
+        </div>
+        <div class="info-row">
+          <span class="info-dot combined"></span>
+          <span><strong>Combined Score</strong> — final shortlist ranking</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ── Main Results Area ────────────────────────────────────────────── -->
+    <main class="results-area">
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🎯</div>
+        <div class="empty-title">Ready to Screen CVs</div>
+        <div class="empty-desc">
+          Paste a job description, upload a PDF CV,<br>
+          and click <strong>Submit</strong> to begin.
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div class="loading-state hidden" id="loadingState">
+        <div class="spinner"></div>
+        <div class="loading-title">Analysing CV…</div>
+        <div class="loading-desc" id="loadingDesc">Running Sysnova AI + ATS scoring</div>
+      </div>
+
+      <!-- Results -->
+      <div class="hidden" id="resultsContainer">
+
+        <!-- Summary stats -->
+        <div class="stats-row" id="statsRow"></div>
+
+        <!-- Charts row -->
+        <div class="charts-row" id="chartsRow">
+          <div class="chart-card">
+            <div class="chart-card-title">📊 Candidate Score Comparison</div>
+            <div class="chart-wrap"><canvas id="chartBar"></canvas></div>
+          </div>
+          <div class="chart-card chart-card-sm">
+            <div class="chart-card-title">Avg Keyword Coverage</div>
+            <div class="chart-wrap chart-wrap-sm"><canvas id="chartDoughnut"></canvas></div>
+            <div class="doughnut-legend" id="doughnutLegend"></div>
+          </div>
+        </div>
+
+        <!-- Download -->
+        <div class="results-toolbar">
+          <div class="results-meta" id="resultsMeta"></div>
+          <button class="download-btn" id="downloadBtn">
+            ⬇ Export CSV
+          </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="all" id="tabAll">All</button>
+          <button class="tab-btn" data-tab="shortlisted" id="tabShortlisted">✅ Shortlisted</button>
+          <button class="tab-btn" data-tab="rejected" id="tabRejected">❌ Rejected</button>
+        </div>
+
+        <!-- Card lists -->
+        <div id="panelAll"></div>
+        <div id="panelShortlisted" class="hidden"></div>
+        <div id="panelRejected" class="hidden"></div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Exam Modal ───────────────────────────────────────────────────────── -->
+  <div id="examModal" class="exam-modal hidden" role="dialog" aria-modal="true" aria-labelledby="examTitle">
+    <div class="exam-header">
+      <div class="exam-header-left">
+        <span class="exam-logo">📝</span>
+        <div>
+          <div id="examTitle" class="exam-title">Examination Paper</div>
+          <div id="examCandidate" class="exam-candidate-name"></div>
+        </div>
+      </div>
+      <div class="exam-header-right">
+        <div class="exam-score-box">
+          <span class="exam-score-label">Answered</span>
+          <span id="examAnsweredCount" class="exam-score-val">0</span>
+          <span class="exam-score-label">/ 15</span>
+        </div>
+        <button id="examCloseBtn" class="exam-close-btn" aria-label="Close exam">✕</button>
+      </div>
+    </div>
+    <div class="exam-body">
+      <div class="exam-info-bar">
+        <span>Total Marks: <strong>30</strong></span>
+        <span>Questions: <strong>15</strong></span>
+      </div>
+      <div id="examQuestions" class="exam-questions-container"></div>
+    </div>
+    <div class="exam-footer">
+      <span id="examFooterProgress" class="exam-progress-text">0 of 15 questions answered</span>
+      <button id="examSubmitBtn" class="exam-submit-btn">Submit Exam</button>
+    </div>
+  </div>
+
+  <!-- Warning Dialog -->
+  <div id="examWarning" class="exam-warning-overlay hidden">
+    <div class="exam-warning-dialog">
+      <div class="exam-warning-icon">⚠️</div>
+      <h3>Submit Exam?</h3>
+      <p id="examWarningText">You have answered <strong id="examWarningAnswered">0</strong> of 15 questions.</p>
+      <p class="exam-warning-sub">Once submitted, you cannot change your answers.</p>
+      <div class="exam-warning-actions">
+        <button id="examWarningCancel" class="btn-secondary">Go Back</button>
+        <button id="examWarningConfirm" class="btn-danger">Yes, Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grading Overlay -->
+  <div id="examGrading" class="exam-grading-overlay hidden">
+    <div class="exam-grading-box">
+      <div class="exam-spinner"></div>
+      <p>Evaluating your answers…</p>
+    </div>
+  </div>
+
+  <style>
+    .back-btn {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.15); }
+  </style>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/neural-network.js"></script>
+  <script>
+    const _lBtn = document.getElementById("logoutBtn");
+    if (_lBtn) _lBtn.addEventListener("click", logout);
+  </script>
+</body>
+</html>
