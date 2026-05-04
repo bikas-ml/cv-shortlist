@@ -467,8 +467,68 @@
 <div class="pb"></div>
 
 
-<!-- ══════════════════ SECTION 4: EVALUATION SIGNALS ══════════════════ -->
-<div class="sec-h">4. Key Evaluation Signals</div>
+<!-- ══════════════════ SECTION 4: BATCH ANALYSIS ══════════════════ -->
+<div class="sec-h">4. Batch Analysis &amp; Bulk Examination Distribution</div>
+<p class="sec-intro">
+  One of the most operationally significant capabilities of the CV Shortlister system is its support for <strong>batch processing</strong>. Rather than evaluating candidates one at a time, the HR professional may select multiple résumés simultaneously and instruct the system to analyse all of them in a single batch operation against a chosen job description. Upon completion, HR can review a consolidated comparison across all batch candidates and dispatch examination papers to all shortlisted applicants in a single bulk action — eliminating the need for repetitive individual processing.
+</p>
+
+<div class="steps">
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">1</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Job Description Selection for the Batch</div>
+      <div class="step-body-text">Before initiating a batch run, the HR professional selects the active job description against which all résumés in the batch will be evaluated. This ensures that every candidate in the batch is assessed against a single, consistent set of requirements, making the resulting scores directly comparable across the entire group. The job description remains fixed for the duration of the batch operation.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">2</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Multi-Résumé Selection &amp; Batch Submission</div>
+      <div class="step-body-text">The HR professional selects multiple candidate résumés from the dashboard — either individually or by applying filters such as submission date range or current application status. The selected résumés are submitted together as a single batch to the AI analysis engine. The system queues all selected documents for parallel processing, and no manual intervention is required between individual résumé analyses once the batch has been initiated.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">3</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Parallel AI Analysis Across All Selected Résumés</div>
+      <div class="step-body-text">The system processes all résumés in the batch simultaneously, applying the same evaluation logic to each document. For every résumé, the AI engine produces the full suite of evaluation signals: the overall AI score, skills match, experience match, education match, ATS keyword score, strengths, competency gaps, and missing requirements. Because every résumé is assessed against the same job description using identical logic, the resulting scores are directly comparable and suitable for side-by-side ranking.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">4</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Consolidated Batch Results Review</div>
+      <div class="step-body-text">Once the batch analysis is complete, the HR professional accesses a consolidated results view presenting all evaluated candidates in a single interface. This view enables direct comparison of scores, highlights the strongest candidates at a glance, and allows HR to apply filters or sort by any individual signal. HR can then inspect the detailed analysis for any candidate within the batch without leaving the consolidated view, making shortlisting decisions across a large pool significantly faster and more informed.</div>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-left"><div class="step-num">5</div><div class="step-vline"></div></div>
+    <span class="step-arrow-h">→</span>
+    <div class="step-card">
+      <div class="step-title">Bulk Examination Paper Distribution to Shortlisted Applicants</div>
+      <div class="step-body-text">After reviewing the batch results, the HR professional marks all qualifying candidates as shortlisted and initiates a single bulk exam dispatch. The system simultaneously delivers the examination paper to every shortlisted applicant's account and issues individual notifications to each recipient. HR does not need to send examination papers one by one; the entire shortlisted cohort receives the assessment in a single coordinated action. Each applicant's exam submission is tracked individually within the system, maintaining per-candidate traceability even within a bulk workflow.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="callout" style="margin-top:10px;">
+  <strong>Why Batch Analysis Matters:</strong> In high-volume recruitment scenarios — such as graduate intake cycles or roles with broad applicant pools — evaluating candidates individually is time-prohibitive. Batch analysis allows HR to process tens or hundreds of résumés in a single operation, apply a consistent scoring standard across all of them, and dispatch examinations to the entire shortlisted group simultaneously. This capability is what makes CV Shortlister suitable for real-world, large-scale hiring rather than only low-volume evaluation.
+</div>
+
+
+<!-- ══════════════════ SECTION 5: EVALUATION SIGNALS ══════════════════ -->
+<div class="sec-h">5. Key Evaluation Signals</div>
 <p class="sec-intro">
   The system computes four primary evaluation signals for each résumé submission. All signals are derived strictly from the textual content of the uploaded résumé measured against the job description. No inferred, assumed, or supplemented information is incorporated into any score.
 </p>
@@ -507,8 +567,8 @@
 <p class="note">▸ Scoring principle: The system applies conservative, evidence-only logic. Any requirement not explicitly verifiable in the résumé text is treated as absent and scored accordingly. This ensures that all evaluation outputs reflect confirmed candidate credentials exclusively.</p>
 
 
-<!-- ══════════════════ SECTION 5: WORKFLOW DIAGRAM ══════════════════ -->
-<div class="sec-h">5. End-to-End System Workflow</div>
+<!-- ══════════════════ SECTION 6: WORKFLOW DIAGRAM ══════════════════ -->
+<div class="sec-h">6. End-to-End System Workflow</div>
 <p class="sec-intro">
   The diagram below illustrates the complete operational flow of the system — from the moment an Applicant submits their résumé, through AI analysis and HR review, to the recording of a final hiring decision. Numbered steps correspond to the steps described in Sections 2 and 3 above.
 </p>
@@ -650,11 +710,11 @@
     <text x="555" y="238" text-anchor="middle" font-size="7" font-family="Arial" fill="#5a6475">or Rejected</text>
   </svg>
 </div>
-<div class="caption">Figure 1 — End-to-end CV Shortlister workflow. Top lane (pink): Applicant steps 1–5. Bottom lane (blue): HR steps 1–5. Arrows indicate the direction of progression. Step 3 (AI Analysis) is the shared pivot between both lanes.</div>
+<div class="caption">Figure 1 — End-to-end CV Shortlister workflow. Top lane (pink): Applicant steps 1–5. Bottom lane (blue): HR steps 1–5. Arrows indicate the direction of progression. Step 3 (AI Analysis) is the shared pivot between both lanes. Batch analysis operates across multiple candidates at Steps H2–H4 simultaneously.</div>
 
 
-<!-- ══════════════════ SECTION 6: WHY USEFUL ══════════════════ -->
-<div class="sec-h">6. Value Delivered to Each Role</div>
+<!-- ══════════════════ SECTION 7: WHY USEFUL ══════════════════ -->
+<div class="sec-h">7. Value Delivered to Each Role</div>
 <div class="two-col">
   <div class="col-panel">
     <div class="col-panel-title">For the Applicant</div>
@@ -667,10 +727,10 @@
 </div>
 
 
-<!-- ══════════════════ SECTION 7: CONCLUSION ══════════════════ -->
-<div class="sec-h">7. Conclusion</div>
+<!-- ══════════════════ SECTION 8: CONCLUSION ══════════════════ -->
+<div class="sec-h">8. Conclusion</div>
 <div class="callout">
-  CV Shortlister is a structured recruitment support system that integrates AI-driven résumé analysis, ATS-style keyword matching, and examination-based candidate assessment into a unified two-role hiring workflow. By applying a conservative, evidence-only scoring approach, the system ensures that every evaluation is grounded exclusively in verifiable candidate data rather than assumptions or inferences. The result is a hiring process that is faster and more consistent for HR, transparent and straightforward for Applicants, and fully traceable for organisational records — regardless of the volume of applications received.
+  CV Shortlister is a structured recruitment support system that integrates AI-driven résumé analysis, ATS-style keyword matching, examination-based candidate assessment, and batch processing into a unified two-role hiring workflow. Its batch analysis capability allows HR to evaluate multiple résumés simultaneously against a single job description and distribute examination papers to all shortlisted candidates in one action — making the system equally effective for low-volume and high-volume recruitment scenarios. By applying a conservative, evidence-only scoring approach throughout, the system ensures that every evaluation is grounded exclusively in verifiable candidate data rather than assumptions or inferences. The result is a hiring process that is faster and more consistent for HR, transparent and straightforward for Applicants, and fully traceable for organisational records — regardless of the scale of the candidate pool.
 </div>
 
 
@@ -678,7 +738,7 @@
 <div class="footer">
   <span>CV Shortlister — Project Report</span>
   <span>Confidential · For Internal Use Only</span>
-  <span>Page 2 of 2</span>
+  <span>Page 2–3 of 3</span>
 </div>
 
 </body>
