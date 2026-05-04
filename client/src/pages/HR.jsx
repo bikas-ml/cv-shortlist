@@ -5,7 +5,7 @@ import {
 } from 'chart.js';
 import { authHeaders, authHeadersFormData } from '../utils/auth';
 import Header from '../components/Header';
-import HRBgAnimation from '../components/HRBgAnimation';
+import NeuralNetworkBg from '../components/NeuralNetworkBg';
 import CandidateCard from '../components/CandidateCard';
 import { useSimProgress, AIProgressBar } from '../utils/useSimProgress.jsx';
 
@@ -18,7 +18,9 @@ export default function HR() {
   const [tab, setTab] = useState('overview');
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <NeuralNetworkBg />
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header showNav />
 
       <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 50 }}>
@@ -54,6 +56,7 @@ export default function HR() {
         {tab === 'pending'    && <TabPending />}
         {tab === 'results'    && <TabResults />}
       </div>
+      </div>
     </div>
   );
 }
@@ -86,9 +89,6 @@ function TabOverview({ onNav }) {
 
   return (
     <div style={{ position: 'relative' }}>
-      <div style={{ position: 'absolute', inset: 0, borderRadius: 16, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-        <HRBgAnimation />
-      </div>
       <div style={{ position: 'relative', zIndex: 1 }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>HR Dashboard Overview</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 32 }}>

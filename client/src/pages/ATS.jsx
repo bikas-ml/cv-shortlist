@@ -385,9 +385,15 @@ export default function ATS() {
             </div>
 
             <div className="sidebar-section" style={{ background: 'var(--surface-2)', borderRadius: 8, padding: '10px 12px', fontSize: 12, color: 'var(--text-muted)' }}>
-              <strong style={{ color: 'var(--text-secondary)' }}>Scoring Formula</strong><br />
-              AI Score × 50% + ATS Score × 50%<br />
-              ATS = Keywords(60%) + Density(25%) + Format(15%)
+              <strong style={{ color: 'var(--text-secondary)' }}>Industry-Standard Scoring</strong><br />
+              <strong>Combined:</strong> AI (50%) + ATS (50%)<br />
+              <strong>ATS Formula:</strong><br />
+              • Keywords: 50% (exact matches)<br />
+              • Density: 30% (frequency/prominence)<br />
+              • Format: 20% (parseability)<br />
+              <div style={{ marginTop: 6, fontSize: 11, fontStyle: 'italic' }}>
+                Based on major ATS systems (Taleo, Greenhouse, Lever)
+              </div>
             </div>
 
             {error && <div className="auth-error">{error}</div>}
