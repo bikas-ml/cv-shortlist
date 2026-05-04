@@ -216,11 +216,6 @@ __marimo__/
 node_modules/
 npm-debug.log*
 
-# Environment secrets — never commit
-.env
-.env.*
-!.env.example
-
 # Vite / React build output (generated)
 public/assets/
 
