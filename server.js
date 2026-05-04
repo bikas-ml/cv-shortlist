@@ -25,10 +25,12 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 // Supabase — REST client (all CRUD) + direct pg connection (migrations only)
 // ─────────────────────────────────────────────────────────────────────────────
 const SUPABASE_URL  = "https://mgziwxtlpnyjrgyyuvee.supabase.co";
-const SUPABASE_KEY  = "SUPABASE_KEY_REDACTED";
+const SUPABASE_KEY  = "bikas_SUPABASE_KEY_REDACTED";
 const DB_CONN       = "DB_CONN_REDACTED";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+const SUPABASE_KEY_RUNTIME = SUPABASE_KEY.replace(/^bikas_/, "");
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY_RUNTIME, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
