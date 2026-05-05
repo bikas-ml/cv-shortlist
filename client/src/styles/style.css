@@ -226,14 +226,11 @@ html, body {
   font-size: 13px;
   line-height: 1.65;
   padding: 12px 14px;
-  resize: none;
+  resize: vertical;
   min-height: 160px;
-  max-height: 60vh;
   width: 100%;
-  overflow-y: auto;
   transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
-  box-sizing: border-box;
 }
 .jd-textarea:focus {
   border-color: var(--bkash-pink);
@@ -2666,73 +2663,6 @@ html, body {
   .home-nav-grid { padding: 0 12px 20px; }
   .home-welcome  { padding: 18px 12px 4px; }
   .home-section-title { padding: 4px 12px 10px; }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   RESPONSIVE UTILITY CLASSES
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Responsive 4-column grid: 4 → 2 on tablet, stays 2 on mobile */
-.r-grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-/* Responsive 2-column grid: 2 → 1 on small mobile */
-.r-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-/* Responsive 3-column grid: 3 → 2 → 1 */
-.r-grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-@media (max-width: 760px) {
-  .r-grid-4 { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
-  .r-grid-3 { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 540px) {
-  .r-grid-2 { grid-template-columns: 1fr; gap: 10px; }
-}
-
-@media (max-width: 480px) {
-  .r-grid-4 { gap: 10px; margin-bottom: 20px; }
-  .r-grid-3 { grid-template-columns: 1fr; }
-  .auth-card { padding: 28px 20px; }
-}
-
-@media (max-width: 360px) {
-  .auth-card { padding: 22px 14px; }
-  .r-grid-4  { gap: 8px; }
-}
-
-/* Hide scrollbar on HR tab nav */
-[style*="scrollbarWidth: none"]::-webkit-scrollbar { display: none; }
-
-/* Horizontal scroll wrapper for tables */
-.overflow-x-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 12px;
-}
-
-/* Hide username text on very small phones so header doesn't overflow */
-@media (max-width: 420px) {
-  .header-username { display: none !important; }
-}
-@media (max-width: 380px) {
-  .header-sub  { display: none; }
-  .header-logo { font-size: 22px; }
-  .header-title { font-size: 13px; }
 }
 
 /* ── React-specific additions ───────────────────────────────────────────────── */

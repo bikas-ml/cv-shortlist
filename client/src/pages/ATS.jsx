@@ -6,6 +6,7 @@ import {
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { authHeadersFormData } from '../utils/auth';
 import Header from '../components/Header';
+import NeuralNetworkBg from '../components/NeuralNetworkBg';
 import CandidateCard from '../components/CandidateCard';
 import { useSimProgress, AIProgressBar } from '../utils/useSimProgress.jsx';
 
@@ -272,20 +273,11 @@ export default function ATS() {
   const [dragOver, setDragOver] = useState(false);
   const [online, setOnline]   = useState(true);
   const fileRef = useRef();
-  const jdRef   = useRef();
   const cvProg = useSimProgress('cv');
 
   // Exam state
   const [examOpen, setExamOpen]   = useState(false);
   const [examCand, setExamCand]   = useState('');
-
-  // Auto-resize JD textarea on mount and value change
-  useEffect(() => {
-    const el = jdRef.current;
-    if (!el) return;
-    el.style.height = 'auto';
-    el.style.height = Math.max(160, el.scrollHeight) + 'px';
-  }, [jd]);
 
   // Health check
   useEffect(() => {
@@ -348,7 +340,8 @@ export default function ATS() {
   } : null;
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+      <NeuralNetworkBg />
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Header showNav />
         <div className="app-layout">
@@ -363,7 +356,7 @@ export default function ATS() {
 
             <div className="sidebar-section">
               <label className="form-label">📋 Job Description</label>
-              <textarea ref={jdRef} className="jd-textarea" placeholder="Paste the job description here…" value={jd} onChange={e => setJd(e.target.value)} />
+              <textarea className="jd-textarea" rows={8} placeholder="Paste the job description here…" value={jd} onChange={e => setJd(e.target.value)} />
             </div>
 
             <div className="sidebar-section">

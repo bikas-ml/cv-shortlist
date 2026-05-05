@@ -37,7 +37,7 @@ export default function Header({ showNav = false }) {
 
         {session && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span className="header-username" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px' }}>
               {session.name}
             </span>
             <button className="logout-btn" onClick={handleLogout}>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { authHeaders, authHeadersFormData } from '../utils/auth';
+import NeuralNetworkBg from '../components/NeuralNetworkBg';
 import Header from '../components/Header';
 import { useSimProgress, AIProgressBar } from '../utils/useSimProgress.jsx';
 
@@ -265,10 +266,11 @@ export default function Dashboard() {
   const answered = Object.keys(answers).length;
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+      <NeuralNetworkBg />
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Header />
-        <main style={{ maxWidth: 820, margin: '0 auto', padding: '24px 16px', boxSizing: 'border-box' }}>
+        <main style={{ maxWidth: 820, margin: '0 auto', padding: '32px 24px' }}>
 
           <div style={{ marginBottom: 24 }}>
             <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>
