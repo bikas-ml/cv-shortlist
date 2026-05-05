@@ -5,7 +5,6 @@ import {
 } from 'chart.js';
 import { authHeaders, authHeadersFormData } from '../utils/auth';
 import Header from '../components/Header';
-import NeuralNetworkBg from '../components/NeuralNetworkBg';
 import CandidateCard from '../components/CandidateCard';
 import { useSimProgress, AIProgressBar } from '../utils/useSimProgress.jsx';
 
@@ -18,26 +17,25 @@ export default function HR() {
   const [tab, setTab] = useState('overview');
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-      <NeuralNetworkBg />
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header showNav />
 
       <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 50 }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px', display: 'flex', gap: 4 }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 16px', display: 'flex', gap: 0, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
           {[
             ['overview',   '🏠 Overview'],
-            ['batch',      '🔬 Batch Analysis'],
+            ['batch',      '🔬 Batch'],
             ['applicants', '👥 Applicants'],
-            ['pending',    '⏳ Exam Pending'],
-            ['results',    '📊 Exam Results'],
+            ['pending',    '⏳ Pending'],
+            ['results',    '📊 Results'],
           ].map(([key, label]) => (
             <button
               key={key}
               onClick={() => setTab(key)}
               style={{
-                padding: '14px 18px', border: 'none', background: 'none', cursor: 'pointer',
-                fontWeight: 600, fontSize: 13,
+                padding: '13px 16px', border: 'none', background: 'none', cursor: 'pointer',
+                fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap', flexShrink: 0,
                 color: tab === key ? 'var(--bkash-pink)' : 'var(--text-secondary)',
                 borderBottom: tab === key ? '3px solid var(--bkash-pink)' : '3px solid transparent',
                 transition: 'all 0.15s',
@@ -91,7 +89,7 @@ function TabOverview({ onNav }) {
     <div style={{ position: 'relative' }}>
       <div style={{ position: 'relative', zIndex: 1 }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>HR Dashboard Overview</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 32 }}>
+        <div className="r-grid-4">
           {[
             ['📄 Total Applications', stats.total,        '#3B82F6'],
             ['✅ Shortlisted',        stats.shortlisted,  '#10B981'],
@@ -104,7 +102,7 @@ function TabOverview({ onNav }) {
             </div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 16 }}>
+        <div className="r-grid-2">
           {[
             ['🔬 Batch Analysis', 'Analyse multiple CVs against a job description at once.', 'batch'],
             ['👥 Applicants',     'Review submitted applications and manage shortlisting.',   'applicants'],
@@ -681,12 +679,12 @@ function AppCard({ app, selected, onToggle, onStatus, onDelete, onExam }) {
 
       {open && r && (
         <div style={{ padding: '0 16px 16px', borderTop: '1px solid var(--border)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginTop: 12, marginBottom: 12 }}>
+          <div className="r-grid-3" style={{ marginTop: 12 }}>
             <ScoreBar label="Skills"     val={r.skills_match || 0} />
             <ScoreBar label="Experience" val={r.experience_match || 0} />
             <ScoreBar label="Education"  val={r.education_match || 0} />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, marginBottom: 12 }}>
+          <div className="r-grid-2" style={{ marginBottom: 12 }}>
             <ScoreBar label="Keywords"   val={r.ats?.keyword_match || 0} />
             <ScoreBar label="Format"     val={r.ats?.format_score || 0} />
           </div>
@@ -772,7 +770,8 @@ function TabPending() {
       ) : filtered.length === 0 ? (
         <div className="empty-state"><div style={{ fontSize: 48 }}>⏳</div><h3>No pending exams</h3></div>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--surface)', borderRadius: 12, overflow: 'hidden' }}>
+        <div className="overflow-x-scroll">
+        <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--surface)', borderRadius: 12, overflow: 'hidden', minWidth: 540 }}>
           <thead style={{ background: 'var(--bkash-pink)', color: '#fff' }}>
             <tr>
               {['Candidate', 'Email', 'Sent', 'Expires', 'Time Left', ''].map(h => (
@@ -807,6 +806,7 @@ function TabPending() {
             })}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );
@@ -945,7 +945,7 @@ function ExamDetailModal({ detail, onClose }) {
         {detail.score && (
           <>
             {/* Score summary */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 20 }}>
+            <div className="r-grid-3" style={{ marginBottom: 20 }}>
               {[
                 ['Score',      `${detail.score.totalEarned}/${detail.score.totalMax}`],
                 ['Percentage', `${detail.score.percentage?.toFixed(1)}%`],
@@ -959,7 +959,7 @@ function ExamDetailModal({ detail, onClose }) {
             </div>
 
             {/* 4 Charts */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
+            <div className="r-grid-2" style={{ marginBottom: 20 }}>
               <div style={{ background: 'var(--surface-2)', borderRadius: 10, padding: 14 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 8 }}>SCORE OVERVIEW</div>
                 <DetailDoughnut

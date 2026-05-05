@@ -6,7 +6,6 @@ import {
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { authHeadersFormData } from '../utils/auth';
 import Header from '../components/Header';
-import NeuralNetworkBg from '../components/NeuralNetworkBg';
 import CandidateCard from '../components/CandidateCard';
 import { useSimProgress, AIProgressBar } from '../utils/useSimProgress.jsx';
 
@@ -340,8 +339,7 @@ export default function ATS() {
   } : null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      <NeuralNetworkBg />
+    <div style={{ minHeight: '100vh' }}>
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Header showNav />
         <div className="app-layout">

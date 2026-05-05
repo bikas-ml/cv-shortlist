@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import NeuralNetworkBg from '../components/NeuralNetworkBg';
-
 const HR_EMAIL = 'ai@sysnova.com';
 
 export default function Login() {
@@ -58,9 +56,7 @@ export default function Login() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
-      <NeuralNetworkBg />
-
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 16px', boxSizing: 'border-box' }}>
       <div className="auth-card" style={{ position: 'relative', zIndex: 1 }}>
         <div className="auth-logo">⚡</div>
         <h2 className="auth-title">CV Shortlister</h2>

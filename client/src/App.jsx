@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import NeuralNetworkBg from './components/NeuralNetworkBg';
 import Landing   from './pages/Landing';
 import Login     from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -10,6 +11,7 @@ import ATS       from './pages/ATS';
 export default function App() {
   return (
     <AuthProvider>
+      <NeuralNetworkBg />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
