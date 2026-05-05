@@ -272,11 +272,20 @@ export default function ATS() {
   const [dragOver, setDragOver] = useState(false);
   const [online, setOnline]   = useState(true);
   const fileRef = useRef();
+  const jdRef   = useRef();
   const cvProg = useSimProgress('cv');
 
   // Exam state
   const [examOpen, setExamOpen]   = useState(false);
   const [examCand, setExamCand]   = useState('');
+
+  // Auto-resize JD textarea on mount and value change
+  useEffect(() => {
+    const el = jdRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.max(160, el.scrollHeight) + 'px';
+  }, [jd]);
 
   // Health check
   useEffect(() => {
@@ -354,7 +363,7 @@ export default function ATS() {
 
             <div className="sidebar-section">
               <label className="form-label">📋 Job Description</label>
-              <textarea className="jd-textarea" rows={8} placeholder="Paste the job description here…" value={jd} onChange={e => setJd(e.target.value)} />
+              <textarea ref={jdRef} className="jd-textarea" placeholder="Paste the job description here…" value={jd} onChange={e => setJd(e.target.value)} />
             </div>
 
             <div className="sidebar-section">

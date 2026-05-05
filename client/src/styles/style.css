@@ -226,11 +226,14 @@ html, body {
   font-size: 13px;
   line-height: 1.65;
   padding: 12px 14px;
-  resize: vertical;
+  resize: none;
   min-height: 160px;
+  max-height: 60vh;
   width: 100%;
+  overflow-y: auto;
   transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
+  box-sizing: border-box;
 }
 .jd-textarea:focus {
   border-color: var(--bkash-pink);

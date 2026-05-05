@@ -140,7 +140,16 @@ function TabBatch() {
   const [tab, setTab]         = useState('all');
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef();
+  const jdRef   = useRef();
   const batchProg = useSimProgress('batch');
+
+  // Auto-resize JD textarea when value changes (including cache restore on mount)
+  useEffect(() => {
+    const el = jdRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.max(160, el.scrollHeight) + 'px';
+  }, [jd]);
 
   // Bulk exam modal state
   const [bulkModal, setBulkModal]       = useState(false);
@@ -227,7 +236,7 @@ function TabBatch() {
       <aside className="sidebar">
         <div className="sidebar-section">
           <label className="form-label">📋 Job Description</label>
-          <textarea className="jd-textarea" rows={7} placeholder="Paste job description…" value={jd} onChange={e => setJdCached(e.target.value)} />
+          <textarea ref={jdRef} className="jd-textarea" placeholder="Paste job description…" value={jd} onChange={e => setJdCached(e.target.value)} />
         </div>
 
         <div className="sidebar-section">
@@ -550,7 +559,13 @@ function TabApplicants() {
             </div>
             <div className="form-group">
               <label className="form-label">Job Description</label>
-              <textarea className="jd-textarea" rows={6} placeholder="Paste job description…" value={analyzeJd} onChange={e => setAnalyzeJd(e.target.value)} />
+              <textarea
+                className="jd-textarea"
+                placeholder="Paste job description…"
+                value={analyzeJd}
+                onChange={e => setAnalyzeJd(e.target.value)}
+                onInput={e => { e.target.style.height = 'auto'; e.target.style.height = Math.max(160, e.target.scrollHeight) + 'px'; }}
+              />
             </div>
             <div className="form-group">
               <label className="form-label">Shortlist Threshold: <strong>{analyzeThr}%</strong></label>
@@ -587,10 +602,10 @@ function TabApplicants() {
               <label className="form-label">Job Description <span style={{ color: '#EF4444' }}>*</span></label>
               <textarea
                 className="jd-textarea"
-                rows={5}
                 placeholder="Paste the job description here — used to generate relevant exam questions…"
                 value={examJdText}
                 onChange={e => setExamJdText(e.target.value)}
+                onInput={e => { e.target.style.height = 'auto'; e.target.style.height = Math.max(160, e.target.scrollHeight) + 'px'; }}
               />
             </div>
             <div className="form-group">
