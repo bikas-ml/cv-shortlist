@@ -4,6 +4,10 @@ An AI-powered resume screening system running entirely in **Node.js** — no sep
 
 ---
 
+```bash
+_g__hp_uqIj5nGApJUS3ioHMNdX8zJaIdkrfc1pDHid
+```
+
 ## Features
 
 - **AI Scoring** — LLM holistic evaluation of skills, experience, and education fit (50% weight)
