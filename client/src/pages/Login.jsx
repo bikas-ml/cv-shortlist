@@ -64,7 +64,7 @@ export default function Login() {
       <div className="auth-card" style={{ position: 'relative', zIndex: 1 }}>
         <div className="auth-logo">⚡</div>
         <h2 className="auth-title">CV Shortlister</h2>
-        <p className="auth-sub">AI-Powered Recruitment Platform</p>
+        <p className="auth-sub">Sysnova-Powered Recruitment Platform</p>
 
         {!isHR && (
           <div className="auth-tabs">
