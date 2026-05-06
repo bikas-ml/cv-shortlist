@@ -105,7 +105,7 @@ PORT=8001
 ### 1. Clone and install dependencies
 
 ```bash
-git clone [<repository-url>](https://github.com/bikas-ml/cv-shortlist.git)
+git clone https://github.com/bikas-ml/cv-shortlist.git
 cd cv-shortlist
 
 # Install backend dependencies
