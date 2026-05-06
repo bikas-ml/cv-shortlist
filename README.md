@@ -1,23 +1,25 @@
-# ⚡ CV Shortlister Recruitment Intelligence
+# CV Shortlister — AI-Powered Recruitment Platform
 
-An AI-powered resume screening system running entirely in **Node.js** — no separate Python backend needed. The Express server handles PDF parsing, Groq AI scoring, ATS keyword analysis, exam generation, and grading all in one process.
-
+An end-to-end hiring pipeline built on **Node.js + React**. It screens resumes with Google Gemini AI and ATS keyword analysis, auto-generates skill-based exams, and tracks every candidate from application to final decision — all in a single server.
 ---
 
 ```bash
 _g__hp_uqIj5nGApJUS3ioHMNdX8zJaIdkrfc1pDHid
 ```
+---
 
 ## Features
 
-- **AI Scoring** — LLM holistic evaluation of skills, experience, and education fit (50% weight)
-- **ATS Scoring** — Keyword match, keyword density, and CV format scoring (50% weight)
-- **Combined Ranking** — Candidates ranked and shortlisted above a configurable threshold
-- **Interview Exam** — Auto-generates a 15-question, 30-mark MCQ paper from the job description
-- **Exam Grading** — AI grades submitted exams and returns per-question feedback
-- **Charts & Graphs** — Bar chart, doughnut keyword coverage, per-candidate radar and histogram charts
-- **CSV Export** — Download full results as a CSV file
-- **Login Auth** — Protected dashboard with email/password authentication
+| Feature | Description |
+|---|---|
+| **AI Scoring** | Google Gemini evaluates skills, experience, and education fit (50% of combined score) |
+| **ATS Scoring** | Keyword match, keyword density, and CV format analysis (50% of combined score) |
+| **Batch CV Screening** | Upload multiple PDFs + job description and get an instant ranked shortlist |
+| **Exam Generation** | Auto-generates a 15-question, 30-mark MCQ paper from any job description |
+| **Auto Grading** | System grades submitted exams and returns per-question feedback with a final score |
+| **Full Candidate Pipeline** | Status tracking: Received → Reviewed → Shortlisted → Exam Sent → Selected/Rejected |
+| **Analytics Dashboard** | Radar charts, histograms, live stats, and CSV export |
+| **Role-Based Access** | Separate HR and Applicant portals with protected routes |
 
 ---
 
@@ -25,97 +27,157 @@ _g__hp_uqIj5nGApJUS3ioHMNdX8zJaIdkrfc1pDHid
 
 | Layer | Technology |
 |---|---|
-| LLM | llama-3.1-8b-instant via **Groq** |
-| PDF Extraction | **pdf-parse** (Node.js) |
-| Backend + Frontend | **Node.js** + Express (single server) |
-| Charts | **Chart.js** |
+| Backend | Node.js 18 + Express |
+| Frontend | React 18 + Vite 5 + React Router 6 |
+| AI / LLM | Google Gemini (`gemma-3-27b-it`) |
+| Database | PostgreSQL via Supabase |
+| PDF Processing | pdf-parse, pdfkit |
+| Charts | Chart.js + react-chartjs-2 |
+| Deployment | Vercel (serverless) |
+| Auth | Stateless HMAC-SHA256 tokens |
 
 ---
 
 ## Project Structure
 
 ```
-resume-screening-ai/
-├── server.js           # All-in-one Express server (API + static files)
-├── package.json
-├── .env                # GROQ_API_KEY goes here
-├── public/
-│   ├── index.html      # Main ATS dashboard
-│   ├── login.html      # Login page
-│   ├── css/
-│   │   └── style.css
-│   └── js/
-│       ├── app.js      # Dashboard logic
-│       └── login.js    # Login logic
-└── README.md
+munsi-hr-cv-shortlist-and-ai-evaluations/
+├── server.js             # Express backend — all API endpoints, AI logic, PDF parsing
+├── config.js             # Environment variable loader
+├── vercel.json           # Vercel deployment config
+├── package.json          # Backend dependencies
+│
+├── client/               # React SPA (source)
+│   ├── vite.config.js
+│   ├── package.json
+│   └── src/
+│       ├── App.jsx           # Routes + AuthProvider
+│       ├── pages/
+│       │   ├── Login.jsx     # Sign in / sign up
+│       │   ├── Landing.jsx   # Role-based home
+│       │   ├── Dashboard.jsx # Applicant portal
+│       │   ├── HR.jsx        # HR hub (5 tabs)
+│       │   └── ATS.jsx       # Quick single-CV screener
+│       ├── components/       # Header, ProtectedRoute, CandidateCard, etc.
+│       ├── context/
+│       │   └── AuthContext.jsx
+│       └── utils/            # auth.js, useSimProgress.jsx
+│
+└── public/               # Built React app (Vite output — do not edit directly)
 ```
 
 ---
 
 ## Prerequisites
 
-- **Node.js 18+**
-- A **Groq API key** → already configured in `server.js`
+- Node.js 18+
+- A [Google Gemini API key](https://ai.google.dev/)
+- A [Supabase](https://supabase.com/) project (PostgreSQL database)
 
 ---
 
-## Setup
+## Environment Variables
 
-### 1. Clone the repository
+Create a `.env` file in the project root:
+
+```env
+GEMINI_API_KEY=your_google_gemini_api_key
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your_supabase_anon_key
+DB_CONN=postgresql://user:password@host:port/database
+TOKEN_SECRET=any_random_secret_string
+PORT=8001
+```
+
+| Variable | Required | Description |
+|---|---|---|
+| `GEMINI_API_KEY` | Yes | Google Gemini API authentication |
+| `SUPABASE_URL` | Yes | Supabase project URL |
+| `SUPABASE_KEY` | Yes | Supabase public anon key |
+| `DB_CONN` | Yes | PostgreSQL connection string |
+| `TOKEN_SECRET` | Yes | Secret for signing HMAC auth tokens |
+| `PORT` | No | Server port (default: `8001`) |
+
+---
+
+## Setup & Running
+
+### 1. Clone and install dependencies
 
 ```bash
 git clone <repository-url>
-cd resume-screening-ai
-```
+cd munsi-hr-cv-shortlist-and-ai-evaluations
 
-### 2. Install Node.js dependencies
-
-```bash
+# Install backend dependencies
 npm install
+
+# Install frontend dependencies
+cd client && npm install && cd ..
 ```
 
----
+### 2. Configure environment
 
-## Running the Application
+Copy the `.env` example above and fill in your credentials.
+
+### 3. Initialize the database (first time only)
 
 ```bash
-node server.js
+# Start the server, then visit this URL once to create all tables
+http://localhost:8001/api/setup
+```
+
+### 4. Run in development
+
+```bash
+# Run both backend and frontend dev servers together
+npm run dev
+
+# Or run separately:
+# Backend only (port 8001)
+npm start
+
+# Frontend only (port 5173, proxies /api to backend)
+cd client && npm run dev
+```
+
+### 5. Build for production
+
+```bash
+npm run build:start
+# Builds the React app into /public, then starts Express serving it
 ```
 
 Open **http://localhost:8001** in your browser.
 
-That's it — **one command**, one server, everything runs in Node.js.
+---
+
+## Default Login Credentials
+
+| Role | Email | Password |
+|---|---|---|
+| HR Admin | `ai@sysnova.com` | `admin2025` |
+| Applicant | Sign up with any email | any password |
+
+New applicant accounts are auto-created on first login.
 
 ---
 
-## Login Credentials
+## How It Works
 
-| Field | Value |
-|---|---|
-| Email | `aiteam2025@sysnova.com` |
-| Password | `#@Aiteam2025@#` |
+### For Applicants
+1. Sign up and log in
+2. Upload your CV (PDF) with a job title
+3. Wait for HR to review and shortlist you
+4. If shortlisted, take the auto-generated exam in your dashboard
+5. View your score and feedback after submission
 
----
-
-## API Endpoints
-
-All endpoints are served by the same Node.js server on port `8001`.
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/login` | Authenticate and receive session token |
-| `GET` | `/api/health` | Health check — returns server status |
-| `POST` | `/api/shortlist` | Screen a CV PDF against a job description |
-| `POST` | `/api/generate-questions` | Generate a 15-question MCQ exam from a JD |
-| `POST` | `/api/submit-exam` | Grade a completed MCQ exam submission |
-
-### `POST /api/shortlist` — Form fields
-
-| Field | Type | Description |
-|---|---|---|
-| `jd_text` | `string` | Full job description text |
-| `cv` | `file` | Candidate CV (PDF only) |
-| `threshold` | `int` | Min combined score to shortlist (default: `70`) |
+### For HR
+1. Log in as HR (`ai@sysnova.com`)
+2. **Batch Analysis tab** — upload multiple CVs + job description, set a score threshold, click Analyze
+3. Review the ranked shortlist with AI + ATS scores
+4. Select candidates and send them an auto-generated exam
+5. **Exam Results tab** — view submitted exams, scores, and set final decisions (Selected / Rejected)
+6. Export all results as CSV at any time
 
 ---
 
@@ -124,199 +186,86 @@ All endpoints are served by the same Node.js server on port `8001`.
 ```
 Combined Score = (AI Score × 50%) + (ATS Score × 50%)
 
-ATS Score      = (Keyword Match × 60%) + (Keyword Density × 25%) + (Format Score × 15%)
+ATS Score = (Keyword Match × 50%) + (Keyword Density × 30%) + (Format Score × 20%)
 ```
 
-Candidates with a **Combined Score ≥ threshold** are shortlisted.
+**Bonuses / Penalties applied to ATS Score:**
+- `+5` if keyword match ≥ 90%
+- `-10` if keyword match < 50%
+- `+3` if both keyword match and density ≥ 70%
+- `-5` if format score < 60%
+
+Candidates with a **Combined Score ≥ threshold** (default: 70) are shortlisted.
 
 ---
 
-## Environment Variables
+## Exam Format
 
-No environment variables needed — the Groq API key is configured directly in `server.js`.
+Each exam is generated from the job description and contains:
 
-An AI-powered resume screening system that combines large language model evaluation with traditional ATS keyword scoring to rank and shortlist candidates automatically.
+| Difficulty | Questions | Marks Each | Total |
+|---|---|---|---|
+| Easy | 5 | 1 | 5 |
+| Medium | 5 | 2 | 10 |
+| Hard | 5 | 3 | 15 |
+| **Total** | **15** | — | **30** |
 
----
-
-## Features
-
-- **AI Scoring** — LLM holistic evaluation of skills, experience, and education fit (50% weight)
-- **ATS Scoring** — Keyword match, keyword density, and CV format scoring (50% weight)
-- **Combined Ranking** — Candidates ranked and shortlisted above a configurable threshold
-- **Interview Exam** — Auto-generates a 15-question, 30-mark MCQ paper from the job description
-- **Exam Grading** — AI grades submitted exams and returns per-question feedback
-- **Charts & Graphs** — Bar chart, doughnut keyword coverage, per-candidate radar and histogram charts
-- **CSV Export** — Download full results as a CSV file
-- **Login Auth** — Protected dashboard with email/password authentication
+Exams expire after **7 days** from when they are sent.
 
 ---
 
-## Tech Stack
+## API Reference
 
-| Layer | Technology |
-|---|---|
-| LLM | llama-3.1-8b-instant via **Groq** |
-| PDF Extraction | **pymupdf4llm** |
-| Backend API | **FastAPI** + Uvicorn |
-| Dashboard | **Node.js** + Express |
-| Charts | **Chart.js** |
-
----
-
-## Project Structure
-
-```
-resume-screening-ai/
-├── files/
-│   ├── api.py              # FastAPI backend (all endpoints)
-│   ├── app.py              # (legacy Streamlit entry point)
-│   └── requirements.txt    # Python dependencies
-├── dashboard/
-│   ├── server.js           # Node.js Express server
-│   ├── package.json
-│   └── public/
-│       ├── index.html      # Main ATS dashboard
-│       ├── login.html      # Login page
-│       ├── css/
-│       │   └── style.css
-│       └── js/
-│           ├── app.js      # Dashboard logic
-│           └── login.js    # Login logic
-└── README.md
-```
-
----
-
-## Prerequisites
-
-- **Python 3.10+**
-- **Node.js 18+**
-- A **Groq API key** → [https://console.groq.com](https://console.groq.com)
-
----
-
-## Setup
-
-### 1. Clone the repository
-
-```bash
-git clone <repository-url>
-cd resume-screening-ai
-```
-
-### 2. Create a `.env` file inside `files/`
-
-```bash
-# files/.env
-GROQ_API_KEY=your_groq_api_key_here
-```
-
-### 3. Install Python dependencies
-
-```bash
-cd files
-python -m venv ../venv
-source ../venv/bin/activate        # Windows: ..\venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 4. Install Node.js dependencies
-
-```bash
-cd ../dashboard
-npm install
-```
-
----
-
-## Running the Application
-
-> Both servers must be running at the same time in separate terminals.
-
-### Terminal 1 — Start the FastAPI backend
-
-```bash
-cd files
-source ../venv/bin/activate        # Windows: ..\venv\Scripts\activate
-uvicorn api:app --reload --port 8000
-```
-
-Backend will be available at: **http://localhost:8000**
-Interactive API docs: **http://localhost:8000/docs**
-
----
-
-### Terminal 2 — Start the Node.js dashboard
-
-```bash
-cd dashboard
-node server.js
-```
-
-Dashboard will be available at: **http://localhost:8001**
-
----
-
-## Login Credentials
-
-| Field | Value |
-|---|---|
-| Email | `aiteam2025@sysnova.com` |
-| Password | `#@Aiteam2025@#` |
-
----
-
-## API Endpoints
-
+### Auth
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/login` | Authenticate and receive session token |
-| `GET` | `/health` | Health check — returns API status |
-| `POST` | `/shortlist` | Screen CVs against a job description |
-| `POST` | `/generate-questions` | Generate a 15-question MCQ exam from a JD |
-| `POST` | `/submit-exam` | Grade a completed MCQ exam submission |
+| `POST` | `/api/auth/login` | Login or register |
+| `GET` | `/api/auth/me` | Get current user |
+| `POST` | `/api/auth/logout` | Logout |
 
-### `POST /shortlist` — Form fields
-
-| Field | Type | Description |
+### Applications
+| Method | Endpoint | Description |
 |---|---|---|
-| `jd_text` | `string` | Full job description text |
-| `cv` | `file` | Candidate CV (PDF only) |
-| `threshold` | `int` | Min combined score to shortlist (default: `70`) |
+| `POST` | `/api/applications/upload` | Applicant uploads a CV |
+| `GET` | `/api/applications/mine` | Applicant views their submissions |
+| `GET` | `/api/applications` | HR views all applications |
+| `POST` | `/api/applications/analyze` | HR analyzes CVs against a job description |
+| `PATCH` | `/api/applications/:id/status` | HR updates application status |
+| `DELETE` | `/api/applications/:id` | HR deletes an application |
+| `GET` | `/api/applications/:id/pdf` | Download CV PDF |
 
----
-
-## Scoring Formula
-
-```
-Combined Score = (AI Score × 50%) + (ATS Score × 50%)
-
-ATS Score      = (Keyword Match × 60%) + (Keyword Density × 25%) + (Format Score × 15%)
-```
-
-Candidates with a **Combined Score ≥ threshold** are shortlisted.
-
----
-
-## Environment Variables
-
-| Variable | Required | Description |
+### Exams
+| Method | Endpoint | Description |
 |---|---|---|
-| `GROQ_API_KEY` | ✅ Yes | Your Groq API key |
-| `PORT` | No | Node.js server port (default: `8001`) |
-| `API_URL` | No | FastAPI base URL (default: `http://localhost:8000`) |
+| `POST` | `/api/exams/send` | HR sends exam to a candidate |
+| `POST` | `/api/exams/send-bulk` | HR sends exam to multiple candidates |
+| `GET` | `/api/exams/mine` | Applicant views their exams |
+| `POST` | `/api/exams/start` | Applicant fetches exam questions |
+| `POST` | `/api/exams/submit` | Applicant submits answers |
+| `GET` | `/api/exams` | HR views all exams |
+| `PATCH` | `/api/exams/:id/decision` | HR sets final decision |
+| `DELETE` | `/api/exams/:id` | HR deletes an exam record |
 
 ---
 
-## Quick Start (All-in-one)
+## Deployment on Vercel
+
+The project is pre-configured for Vercel via `vercel.json`. The Express server handles both API routes and serves the React SPA.
 
 ```bash
-# Terminal 1 — Backend
-cd files && source ../venv/bin/activate && uvicorn api:app --reload --port 8000
-
-# Terminal 2 — Frontend
-cd dashboard && node server.js
+vercel deploy
 ```
 
-Then open **http://localhost:8001** in your browser.
+Make sure all environment variables are set in your Vercel project settings before deploying.
+
+---
+
+## Database Schema
+
+**users** — `id`, `email`, `name`, `role` (user | hr), `password`, `created_at`
+
+**applications** — `id`, `user_id`, `candidate_email`, `candidate_name`, `file_name`, `job_title`, `pdf_base64`, `pdf_text`, `uploaded_at`, `status`, `analysis_result` (JSONB), `exam_id`, `jd_text`
+
+**exams** — `id`, `user_id`, `application_id`, `candidate_email`, `questions` (JSONB), `answers` (JSONB), `submitted`, `score` (JSONB), `jd_text`, `sent_at`, `expires_at`, `completed_at`, `total_marks`, `final_decision`
+
+Application status values: `uploaded` → `analyzed` → `shortlisted` / `rejected` → `exam_sent` → `exam_completed` → `selected`
