@@ -105,8 +105,8 @@ PORT=8001
 ### 1. Clone and install dependencies
 
 ```bash
-git clone <repository-url>
-cd munsi-hr-cv-shortlist-and-ai-evaluations
+git clone [<repository-url>](https://github.com/bikas-ml/cv-shortlist.git)
+cd cv-shortlist
 
 # Install backend dependencies
 npm install
