@@ -1,7 +1,7 @@
 # CV Shortlister — AI-Powered Recruitment Platform
+---
 
 An end-to-end hiring pipeline built on **Node.js + React**. It screens resumes with Google Gemini AI and ATS keyword analysis, auto-generates skill-based exams, and tracks every candidate from application to final decision — all in a single server.
----
 
 ```bash
 _g__hp_uqIj5nGApJUS3ioHMNdX8zJaIdkrfc1pDHid
