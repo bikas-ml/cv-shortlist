@@ -20,7 +20,7 @@ const app    = express();
 const PORT   = process.env.PORT || 8001;
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
-const MODEL            = "gemma-3-27b-it";
+const MODEL            = "gemma-3-12b-it";
 const MAX_CV_CHARS     = 12000;
 const HR_EMAIL         = "ai@sysnova.com";
 const EXAM_EXPIRY_DAYS = 7;
